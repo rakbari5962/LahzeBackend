@@ -1,0 +1,11 @@
+class BusinessStatus:
+
+    DRAFT = "DRAFT"
+
+    PROFILE_INCOMPLETE = "PROFILE_INCOMPLETE"
+
+    READY = "READY"
+
+    ACTIVE = "ACTIVE"
+
+    SUSPENDED = "SUSPENDED"
