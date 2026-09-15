@@ -1,3 +1,13 @@
+from app.routers.admin_release_error_router import router as admin_release_error_router
+
+from app.routers.admin_release_router import router as admin_release_router
+
+from app.routers.admin_treasury_router import router as admin_treasury_router
+
+from app.routers.admin_dashboard_router import router as admin_dashboard_router
+
+from app.routers.admin_reward_router import router as admin_reward_router
+
 from app.services.scheduler_service import (
     start_scheduler
 )
@@ -93,7 +103,6 @@ app = FastAPI(
     docs_url=None
 
 )
-
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui():
@@ -255,6 +264,10 @@ app.include_router(
     notifications_router
 )
 
+app.include_router(
+    admin_reward_router
+)
+
 
 app.include_router(
     reviews_router
@@ -262,7 +275,20 @@ app.include_router(
 
 
 app.include_router(
+    admin_release_router
+)
+
+
+app.include_router(
     admin_errors_router
+)
+
+app.include_router(
+    admin_treasury_router
+)
+
+app.include_router(
+    admin_release_error_router
 )
 
 
@@ -279,6 +305,9 @@ app.include_router(
     admin_device_analytics_router
 )
 
+app.include_router(
+    admin_dashboard_router
+)
 
 app.include_router(
     errors_router

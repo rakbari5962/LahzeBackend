@@ -63,7 +63,16 @@ def create_reward_payable_account(
     )
 
 
+def create_commission_payable_account(
+    db: Session
+):
 
+    return create_account(
+        db,
+        owner_type="PLATFORM",
+        owner_id=1,
+        account_type="COMMISSION_PAYABLE"
+    )
 
 
 def create_escrow_account(
@@ -118,7 +127,17 @@ def initialize_platform_accounts(
     accounts.append(
         reward_account
     )
+    
 
+
+    # حساب بدهی Commission
+    commission_account = create_commission_payable_account(
+        db
+    )
+
+    accounts.append(
+        commission_account
+    )
 
     # حساب واسط نگهداری پول رزروها
     escrow_account = create_escrow_account(

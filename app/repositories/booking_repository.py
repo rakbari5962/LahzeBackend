@@ -1,3 +1,7 @@
+from app.services.commission_service import (
+    create_booking_commissions
+)
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
@@ -98,7 +102,28 @@ def create_booking(
          )
 
 
+    # ایجاد کمیسیون‌های معرفی به صورت PENDING
+    # در این مرحله هیچ مبلغی وارد Wallet نمی‌شود
 
+    commission_events = create_booking_commissions(
+        db=db,
+        business_id=opportunity.business_id,
+        booking_id=db_booking.id,
+        amount=opportunity.final_price
+    )
+
+    print(
+        "PENDING COMMISSION EVENTS:",
+        [
+            {
+                "id": event.id,
+                "user_id": event.user_id,
+                "amount": event.amount,
+                "status": event.status
+            }
+            for event in commission_events
+        ]
+    )
 
 
 
