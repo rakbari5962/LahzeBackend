@@ -1,3 +1,7 @@
+from app.services.settlement_reward_trigger_service import (
+    trigger_settlement_rewards
+)
+
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 import uuid
@@ -227,8 +231,6 @@ def cancel_confirmed_booking(
         reference_id=booking_id
     )
 
-
-
     # -----------------------------
     # Ledger
     # -----------------------------
@@ -336,7 +338,12 @@ def cancel_confirmed_booking(
         platform_transaction_id
     )
 
-
+    trigger_settlement_rewards(
+        db=db,
+        business_id=booking.business_id,
+        platform_amount=platform_amount,
+        settlement_reference_id=booking_id
+    )
 
     booking.status = "CANCELLED"
 
@@ -409,6 +416,34 @@ def cancel_confirmed_booking(
 
 
     return booking
+
+
+def cancel_pending_booking(
+        db: Session,
+        booking_id: int
+    ):
+
+    booking = db.query(Booking).filter(
+        Booking.id == booking_id
+    ).first()
+
+    if not booking:
+        return None
+
+    if booking.status != "PENDING_CONFIRMATION":
+        return None
+
+    booking.status = "CANCELLED"
+
+    booking.cancelled_at = datetime.now(
+        timezone.utc
+    )
+
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+
 
 def preview_cancel_confirmed_booking(
     db: Session,
