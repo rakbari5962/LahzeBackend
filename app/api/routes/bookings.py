@@ -189,17 +189,18 @@ def cancel_confirm_request(
 
 
 
-    cancel_confirmed_booking(
+    result = cancel_confirmed_booking(
         db=db,
         booking_id=booking_id,
         amount=opportunity.final_price
     )
 
 
-    return get_booking(
-        db,
-        booking_id
-    )
+    if not result:
+        return None
+
+
+    return result
 
 
 
