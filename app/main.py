@@ -10,8 +10,7 @@ load_dotenv()
 
 
 from fastapi import FastAPI, Request
-
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 
 
 
@@ -85,16 +84,63 @@ from app.api.routes.business_visibility import router as business_visibility_rou
 
 
 
-app = FastAPI(
+app = FastAPI( 
 
-    title="Lahze Backend",
+    title="Lahze Backend", 
 
-    version="1.0.0"
+    version="1.0.0",
+
+    docs_url=None
 
 )
 
 
-@app.on_event("startup")
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui():
+
+    return HTMLResponse(
+        """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css">
+
+            <style>
+                body {
+                    background: #111827;
+                }
+
+                .swagger-ui {
+                    filter: invert(0.9) hue-rotate(180deg);
+                }
+
+                .swagger-ui img {
+                    filter: invert(1);
+                }
+            </style>
+        </head>
+
+        <body>
+
+        <div id="swagger-ui"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js"></script>
+
+        <script>
+            SwaggerUIBundle({
+                url: "/openapi.json",
+                dom_id: '#swagger-ui'
+            })
+        </script>
+
+        </body>
+        </html>
+        """
+    )
+
+
+@app.on_event("startup") 
 def startup_event():
 
     start_scheduler()
