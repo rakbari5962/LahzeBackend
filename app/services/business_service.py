@@ -11,6 +11,14 @@ from app.repositories.business_service_repository import (
 )
 
 
+from app.repositories.business_priority_access_repository import (
+    create_priority_access
+)
+
+
+from app.models.invitation import Invitation
+
+
 from app.services.category_suggestion_service import (
     create_ai_category_suggestion
 )
@@ -22,6 +30,65 @@ from app.schemas.business import BusinessCreate
 from app.schemas.business_service import (
     BusinessServiceCreate
 )
+
+
+
+
+
+def create_founder_inviter_attribution(
+
+    db: Session,
+
+    business_id: int,
+
+    owner_user_id: int
+
+):
+
+
+    invitation = (
+
+        db.query(Invitation)
+
+        .filter(
+
+            Invitation.accepted_user_id == owner_user_id,
+
+            Invitation.status == "ACCEPTED",
+
+            Invitation.accepted_phone_match == True
+
+        )
+
+        .first()
+
+    )
+
+
+
+    if not invitation:
+
+        return None
+
+
+
+    return create_priority_access(
+
+        db=db,
+
+        business_id=business_id,
+
+        user_id=invitation.inviter_user_id,
+
+        access_type="FOUNDER_INVITER",
+
+        source_id=invitation.id
+
+    )
+
+
+
+
 
 
 
@@ -45,6 +112,20 @@ def create_business(
         db=db,
 
         business=business,
+
+        owner_user_id=owner_user_id
+
+    )
+
+
+
+    # ثبت Founder Inviter Attribution
+
+    create_founder_inviter_attribution(
+
+        db=db,
+
+        business_id=db_business.id,
 
         owner_user_id=owner_user_id
 

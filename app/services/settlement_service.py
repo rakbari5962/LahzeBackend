@@ -1,3 +1,7 @@
+from app.services.priority_access_reward_service import (
+    trigger_priority_access_rewards
+)
+
 from app.repositories.financial_transaction_repository import (
     get_transaction_by_reference
 )
@@ -351,6 +355,12 @@ def settle_payment(
         settlement_reference_id=booking_id
     )
 
+    trigger_priority_access_rewards(
+        db=db,
+        business_id=business_id,
+        booking_id=booking_id,
+        amount=amount
+    )
 
 
 

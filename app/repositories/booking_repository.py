@@ -1,3 +1,8 @@
+from app.repositories.business_priority_access_repository import (
+    create_priority_access,
+    has_first_customer_access
+)
+
 from app.services.commission_service import (
     create_booking_commissions
 )
@@ -303,10 +308,27 @@ def confirm_booking(
         )
 
 
+        # ثبت First Customer Priority Access
+
+        if not has_first_customer_access(
+            db=db,
+            business_id=booking.business_id
+        ):
+
+            create_priority_access(
+                db=db,
+                business_id=booking.business_id,
+                user_id=booking.user_id,
+                access_type="FIRST_CUSTOMER",
+                source_id=booking.id
+            )
+
+
         db.commit()
+
         db.refresh(booking)
 
-
+    
 
 
 

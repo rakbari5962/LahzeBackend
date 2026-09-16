@@ -94,6 +94,8 @@ def verify_otp_code(
 
     code: str,
 
+    invitation_id: int | None = None,
+
     db: Session = Depends(get_db)
 
 ):
@@ -104,7 +106,9 @@ def verify_otp_code(
 
         phone_number=phone_number,
 
-        code=code
+        code=code,
+
+        invitation_id=invitation_id
 
     )
 
@@ -126,6 +130,8 @@ def verify_otp_code(
             "phone_number": user.phone_number
 
         }
+
+
 
 
 

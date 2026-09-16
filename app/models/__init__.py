@@ -16,6 +16,8 @@ from app.models.financial_transaction import FinancialTransaction
 
 from app.models.business_referral_share import BusinessReferralShare
 
+from app.models.business_priority_access import BusinessPriorityAccess
+
 from app.models.booking import Booking
 
 from app.models.service import Service

@@ -16,6 +16,12 @@ from app.repositories.otp_repository import (
 )
 
 
+from app.repositories.invitation_repository import (
+    get_invitation,
+    accept_invitation
+)
+
+
 from app.services.sms_service import send_verification_code
 
 
@@ -183,7 +189,9 @@ def verify_otp(
 
     phone_number: str,
 
-    code: str
+    code: str,
+
+    invitation_id: int | None = None
 
 ):
 
@@ -309,6 +317,39 @@ def verify_otp(
         db.commit()
 
         db.refresh(user)
+
+
+
+
+
+    # Accept Invitation if user entered through invitation link
+
+    if invitation_id:
+
+
+        invitation = get_invitation(
+
+            db=db,
+
+            invitation_id=invitation_id
+
+        )
+
+
+        if invitation and invitation.status == "PENDING":
+
+
+            accept_invitation(
+
+                db=db,
+
+                invitation=invitation,
+
+                user_id=user.id,
+
+                user_phone=user.phone_number
+
+            )
 
 
 

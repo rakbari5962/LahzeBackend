@@ -72,6 +72,8 @@ from app.api.routes.devices import router as devices_router
 
 from app.api.routes.auth import router as auth_router
 
+from app.api.routes.invitations import router as invitations_router
+
 from app.api.routes.category_suggestions import router as category_suggestions_router
 
 from app.api.routes.business_services import router as business_services_router
@@ -321,6 +323,10 @@ app.include_router(
 
 app.include_router(
     auth_router
+)
+
+app.include_router(
+    invitations_router
 )
 
 
