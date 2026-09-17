@@ -1,3 +1,7 @@
+from app.schemas.no_show import (
+    NoShowReportResponse
+)
+
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
@@ -26,12 +30,31 @@ from app.services.cancellation_service import (
     cancel_confirmed_booking
 )
 
-
+from app.services.no_show_service import (
+    report_no_show,
+    dispute_no_show
+)
 
 router = APIRouter(
     prefix="/bookings",
     tags=["Bookings"]
 )
+
+@router.post(
+    "/{booking_id}/no-show-dispute",
+    response_model=NoShowReportResponse
+)
+def dispute_no_show_request(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+
+    return dispute_no_show(
+        db,
+        booking_id
+    )
+
+
 
 
 
@@ -223,7 +246,21 @@ def cancel_booking_request(
         booking_id
     )
 
+# گزارش عدم حضور مشتری توسط کسب و کار
 
+@router.post(
+    "/{booking_id}/no-show",
+    response_model=NoShowReportResponse
+)
+def report_no_show_request(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
+
+    return report_no_show(
+        db,
+        booking_id
+    )
 
 
 
