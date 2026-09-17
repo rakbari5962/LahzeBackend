@@ -1,3 +1,7 @@
+from app.services.account_service import (
+    create_business_revenue_account
+)
+
 from sqlalchemy.orm import Session
 
 
@@ -115,6 +119,13 @@ def create_business(
 
         owner_user_id=owner_user_id
 
+    )
+
+    # ساخت حساب درآمد کسب و کار
+    
+    create_business_revenue_account(
+        db=db,
+        business_id=db_business.id
     )
 
 

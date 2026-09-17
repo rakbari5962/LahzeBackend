@@ -110,10 +110,24 @@ def upgrade() -> None:
     )
 
 
+    op.create_index(
+        "unique_first_customer_per_business",
+        "business_priority_accesses",
+        ["business_id"],
+        unique=True,
+        postgresql_where=sa.text("type = 'FIRST_CUSTOMER'")
+    )
+
+
 
 
 
 def downgrade() -> None:
+
+    op.drop_index(
+        "unique_first_customer_per_business",
+        table_name="business_priority_accesses"
+    )
 
     op.drop_index(
         "ix_business_priority_accesses_user_id",
