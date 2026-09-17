@@ -1,3 +1,7 @@
+from app.api.routes.business_ai_narrative import router as business_ai_narrative_router
+
+from app.api.routes.business_reputation import router as business_reputation_router
+
 from app.routers.admin_release_error_router import router as admin_release_error_router
 
 from app.routers.admin_release_router import router as admin_release_router
@@ -273,6 +277,14 @@ app.include_router(
 
 app.include_router(
     reviews_router
+)
+
+app.include_router(
+    business_ai_narrative_router
+)
+
+app.include_router(
+    business_reputation_router
 )
 
 

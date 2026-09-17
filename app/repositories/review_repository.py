@@ -1,12 +1,27 @@
 from sqlalchemy.orm import Session
 
+
 from app.models.review import Review
 from app.models.booking import Booking
 from app.models.review_request import ReviewRequest
 
+
 from app.schemas.review import ReviewCreate
-from app.repositories.review_request_repository import complete_review_request
-from app.repositories.reward_event_repository import create_reward_event
+
+
+from app.repositories.review_request_repository import (
+    complete_review_request
+)
+
+
+from app.repositories.reward_event_repository import (
+    create_reward_event
+)
+
+
+from app.services.review_ai_analysis_service import (
+    analyze_business_reviews
+)
 
 
 
@@ -21,15 +36,19 @@ def create_review(
 
 
     if not booking:
+
         return {
             "error": "BOOKING_NOT_FOUND"
         }
 
 
+
     if booking.status != "COMPLETED":
+
         return {
             "error": "BOOKING_NOT_COMPLETED"
         }
+
 
 
     existing_review = db.query(Review).filter(
@@ -38,27 +57,39 @@ def create_review(
 
 
     if existing_review:
+
         return {
             "error": "ALREADY_REVIEWED"
         }
 
 
+
     db_review = Review(
+
         booking_id=booking.id,
+
         user_id=booking.user_id,
+
         business_id=booking.business_id,
+
         rating=review.rating,
+
         comment=review.comment
+
     )
 
 
+
     db.add(db_review)
+
     db.commit()
+
     db.refresh(db_review)
 
 
 
-    # پیدا کردن ReviewRequest مربوط به این Booking
+    # تکمیل Review Request در صورت وجود
+
     review_request = db.query(ReviewRequest).filter(
         ReviewRequest.booking_id == booking.id
     ).first()
@@ -67,21 +98,44 @@ def create_review(
 
     if review_request:
 
+
         complete_review_request(
             db,
             review_request.id
         )
 
 
+
         # ایجاد Reward Event
+
         create_reward_event(
+
             db,
+
             user_id=booking.user_id,
+
             booking_id=booking.id,
+
             review_id=db_review.id,
+
             reward_type="REVIEW_REWARD",
+
             amount=1
+
         )
+
+
+
+    # به‌روزرسانی تحلیل هوشمند اعتبار کسب‌وکار
+
+    # analyze_business_reviews(
+
+    #     db=db,
+
+    #     business_id=booking.business_id
+
+    # )
+
 
 
     return db_review
