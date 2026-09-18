@@ -31,7 +31,9 @@ def create_or_update_analysis(
     )
 
 
+
     if analysis:
+
 
         analysis.total_reviews = data["total_reviews"]
 
@@ -43,6 +45,11 @@ def create_or_update_analysis(
 
         analysis.themes = data["themes"]
 
+        analysis.topic_sentiment = data.get(
+            "topic_sentiment",
+            []
+        )
+
         analysis.customer_sentiment = data["customer_sentiment"]
 
         analysis.model_version = data["model_version"]
@@ -50,6 +57,7 @@ def create_or_update_analysis(
 
 
     else:
+
 
         analysis = ReviewAIAnalysis(
 
@@ -65,6 +73,11 @@ def create_or_update_analysis(
 
             themes=data["themes"],
 
+            topic_sentiment=data.get(
+                "topic_sentiment",
+                []
+            ),
+
             customer_sentiment=data["customer_sentiment"],
 
             model_version=data["model_version"]
@@ -76,12 +89,15 @@ def create_or_update_analysis(
 
 
 
+
     db.commit()
 
     db.refresh(analysis)
 
 
     return analysis
+
+
 
 
 

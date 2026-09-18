@@ -24,6 +24,11 @@ from app.services.review_ai_analysis_service import (
 )
 
 
+from app.services.business_ai_narrative_service import (
+    generate_business_narrative
+)
+
+
 
 def create_review(
     db: Session,
@@ -114,13 +119,15 @@ def create_review(
 
             user_id=booking.user_id,
 
-            booking_id=booking.id,
+            business_id=booking.business_id,
 
-            review_id=db_review.id,
+            booking_id=booking.id,
 
             reward_type="REVIEW_REWARD",
 
-            amount=1
+            amount=1,
+
+            idempotency_key=f"REVIEW_REWARD_{db_review.id}"
 
         )
 
@@ -128,13 +135,25 @@ def create_review(
 
     # به‌روزرسانی تحلیل هوشمند اعتبار کسب‌وکار
 
-    # analyze_business_reviews(
+    analyze_business_reviews(
 
-    #     db=db,
+        db=db,
 
-    #     business_id=booking.business_id
+        business_id=booking.business_id
 
-    # )
+    )
+
+
+
+    # تولید Narrative جدید برای نمایش به مشتری
+
+    generate_business_narrative(
+
+        db=db,
+
+        business_id=booking.business_id
+
+    )
 
 
 

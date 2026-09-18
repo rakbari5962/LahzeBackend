@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 from app.database.database import Base
 
 
+
 class ReviewAIAnalysis(Base):
 
     __tablename__ = "review_ai_analysis"
@@ -58,6 +59,13 @@ class ReviewAIAnalysis(Base):
 
 
     themes = Column(
+        JSON,
+        nullable=True
+    )
+
+
+    # تحلیل احساسات به تفکیک موضوع
+    topic_sentiment = Column(
         JSON,
         nullable=True
     )

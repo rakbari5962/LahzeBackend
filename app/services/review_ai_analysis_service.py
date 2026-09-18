@@ -7,7 +7,8 @@ from app.repositories.review_ai_analysis_repository import (
 )
 
 
-MODEL_VERSION = "rule-based-v1"
+MODEL_VERSION = "rule-based-v3"
+
 
 
 TOPIC_KEYWORDS = {
@@ -20,8 +21,10 @@ TOPIC_KEYWORDS = {
         "حرفه‌ای",
         "ماهر",
         "متخصص",
-        "نتیجه"
+        "نتیجه",
+        "رضایت"
     ],
+
 
     "staff_behavior": [
         "برخورد",
@@ -32,6 +35,7 @@ TOPIC_KEYWORDS = {
         "کارکنان"
     ],
 
+
     "price": [
         "قیمت",
         "گران",
@@ -40,14 +44,17 @@ TOPIC_KEYWORDS = {
         "منصفانه"
     ],
 
+
     "waiting_time": [
         "انتظار",
         "معطل",
         "دیر",
         "تاخیر",
         "تأخیر",
-        "سریع"
+        "زمان انتظار",
+        "طول کشید"
     ],
+
 
     "cleanliness": [
         "تمیز",
@@ -57,6 +64,7 @@ TOPIC_KEYWORDS = {
         "نظافت"
     ],
 
+
     "equipment": [
         "تجهیزات",
         "دستگاه",
@@ -65,6 +73,7 @@ TOPIC_KEYWORDS = {
     ]
 
 }
+
 
 
 TOPIC_LABELS = {
@@ -85,20 +94,209 @@ TOPIC_LABELS = {
 
 
 
+POSITIVE_WORDS = [
+
+    "عالی",
+    "خوب",
+    "بهترین",
+    "رضایت",
+    "راضی",
+    "حرفه‌ای",
+    "حرفه ای",
+    "مودب",
+    "محترم"
+
+]
+
+
+
+NEGATIVE_WORDS = [
+
+    "بد",
+    "ضعیف",
+    "زیاد",
+    "گران",
+    "کثیف",
+    "تاخیر",
+    "تأخیر",
+    "معطل",
+    "زیاد بود",
+    "کم بود"
+
+]
+
+
+
+
+
+def detect_topic_sentiment(
+    comment,
+    topic,
+    keywords
+):
+
+    if not any(
+        keyword in comment
+        for keyword in keywords
+    ):
+
+        return None
+
+
+
+    if topic == "waiting_time":
+
+        if any(
+            word in comment
+            for word in [
+                "زیاد",
+                "طول کشید",
+                "معطل",
+                "تاخیر",
+                "تأخیر",
+                "کند"
+            ]
+        ):
+
+            return "negative"
+
+
+
+        if any(
+            word in comment
+            for word in [
+                "سریع",
+                "به موقع",
+                "بدون انتظار"
+            ]
+        ):
+
+            return "positive"
+
+
+
+    if topic == "quality":
+
+        if any(
+            word in comment
+            for word in [
+                "عالی",
+                "خوب",
+                "حرفه‌ای",
+                "حرفه ای",
+                "ماهر",
+                "متخصص",
+                "رضایت"
+            ]
+        ):
+
+            return "positive"
+
+
+
+        if any(
+            word in comment
+            for word in [
+                "ضعیف",
+                "بد",
+                "بی کیفیت",
+                "نامناسب"
+            ]
+        ):
+
+            return "negative"
+
+
+
+    if topic == "staff_behavior":
+
+        if any(
+            word in comment
+            for word in [
+                "خوب",
+                "مودب",
+                "محترم",
+                "عالی"
+            ]
+        ):
+
+            return "positive"
+
+
+
+        if any(
+            word in comment
+            for word in [
+                "بد",
+                "بی ادب",
+                "نامحترم"
+            ]
+        ):
+
+            return "negative"
+
+
+
+    positive_score = 0
+
+    negative_score = 0
+
+
+
+    for word in POSITIVE_WORDS:
+
+        if word in comment:
+
+            positive_score += 1
+
+
+
+    for word in NEGATIVE_WORDS:
+
+        if word in comment:
+
+            negative_score += 1
+
+
+
+    if negative_score > positive_score:
+
+        return "negative"
+
+
+
+    elif positive_score > negative_score:
+
+        return "positive"
+
+
+
+    return "neutral"
+
+
+
+
+
+
+
 def analyze_business_reviews(
     db: Session,
     business_id: int
 ):
+
 
     reviews = db.query(Review).filter(
         Review.business_id == business_id
     ).all()
 
 
+
     total_reviews = len(reviews)
 
 
+
     if total_reviews == 0:
+
 
         data = {
 
@@ -112,6 +310,8 @@ def analyze_business_reviews(
 
             "themes": [],
 
+            "topic_sentiment": [],
+
             "customer_sentiment": {
                 "positive": 0,
                 "neutral": 0,
@@ -124,52 +324,72 @@ def analyze_business_reviews(
 
 
         return create_or_update_analysis(
-            db=db,
-            business_id=business_id,
-            data=data
+            db,
+            business_id,
+            data
         )
 
 
 
+
+
     average_rating = sum(
-        review.rating for review in reviews
+        review.rating
+        for review in reviews
     ) / total_reviews
 
 
+
+
+
     positive_count = 0
+
     neutral_count = 0
+
     negative_count = 0
+
+
+
 
 
     topic_stats = {}
 
 
+
     for topic in TOPIC_KEYWORDS:
 
         topic_stats[topic] = {
+
             "mentions": 0,
+
             "positive": 0,
+
             "negative": 0
+
         }
+
+
 
 
 
     for review in reviews:
 
+
         if review.rating >= 4:
 
-            sentiment = "positive"
             positive_count += 1
+
 
         elif review.rating == 3:
 
-            sentiment = "neutral"
             neutral_count += 1
+
 
         else:
 
-            sentiment = "negative"
             negative_count += 1
+
+
 
 
         comment = (
@@ -177,14 +397,24 @@ def analyze_business_reviews(
         ).lower()
 
 
+
+
         for topic, keywords in TOPIC_KEYWORDS.items():
 
-            if any(
-                keyword in comment
-                for keyword in keywords
-            ):
+
+            sentiment = detect_topic_sentiment(
+                comment,
+                topic,
+                keywords
+            )
+
+
+
+            if sentiment:
+
 
                 topic_stats[topic]["mentions"] += 1
+
 
 
                 if sentiment == "positive":
@@ -192,9 +422,14 @@ def analyze_business_reviews(
                     topic_stats[topic]["positive"] += 1
 
 
+
                 elif sentiment == "negative":
 
                     topic_stats[topic]["negative"] += 1
+
+
+
+
 
 
 
@@ -204,15 +439,51 @@ def analyze_business_reviews(
 
     themes = []
 
+    topic_sentiment = []
+
+
+
+
 
     for topic, stats in topic_stats.items():
+
 
         if stats["mentions"] == 0:
 
             continue
 
 
+
         label = TOPIC_LABELS[topic]
+
+
+
+        if stats["positive"] > stats["negative"]:
+
+            sentiment = "positive"
+
+
+        elif stats["negative"] > stats["positive"]:
+
+            sentiment = "negative"
+
+
+        else:
+
+            sentiment = "neutral"
+
+
+        topic_sentiment.append({
+
+            "topic": topic,
+
+            "label": label,
+
+            "sentiment": sentiment,
+
+            "mentions": stats["mentions"]
+
+        })
 
 
         themes.append({
@@ -226,7 +497,10 @@ def analyze_business_reviews(
         })
 
 
-        if stats["positive"] > stats["negative"]:
+
+
+        if sentiment == "positive":
+
 
             strengths.append({
 
@@ -241,7 +515,9 @@ def analyze_business_reviews(
             })
 
 
-        elif stats["negative"] > stats["positive"]:
+
+        elif sentiment == "negative":
+
 
             weaknesses.append({
 
@@ -257,17 +533,24 @@ def analyze_business_reviews(
 
 
 
+
+
+
+
     customer_sentiment = {
+
 
         "positive": round(
             positive_count / total_reviews * 100,
             1
         ),
 
+
         "neutral": round(
             neutral_count / total_reviews * 100,
             1
         ),
+
 
         "negative": round(
             negative_count / total_reviews * 100,
@@ -278,9 +561,13 @@ def analyze_business_reviews(
 
 
 
+
+
     data = {
 
+
         "total_reviews": total_reviews,
+
 
         "average_rating": str(
             round(
@@ -289,13 +576,21 @@ def analyze_business_reviews(
             )
         ),
 
+
         "strengths": strengths,
+
 
         "weaknesses": weaknesses,
 
+
         "themes": themes,
 
+
+        "topic_sentiment": topic_sentiment,
+
+
         "customer_sentiment": customer_sentiment,
+
 
         "model_version": MODEL_VERSION
 
@@ -303,8 +598,14 @@ def analyze_business_reviews(
 
 
 
+
+
     return create_or_update_analysis(
+
         db=db,
+
         business_id=business_id,
+
         data=data
+
     )

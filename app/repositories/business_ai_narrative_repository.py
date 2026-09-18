@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 
 from app.models.business_ai_narrative import BusinessAINarrative
 
@@ -43,6 +44,8 @@ def create_or_update_narrative(
 
         narrative.model_version = data["model_version"]
 
+        narrative.generated_at = func.now()
+
 
 
     else:
@@ -62,7 +65,6 @@ def create_or_update_narrative(
             model_version=data["model_version"]
 
         )
-
 
         db.add(narrative)
 

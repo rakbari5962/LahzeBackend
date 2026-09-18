@@ -12,7 +12,8 @@ from app.repositories.business_ai_narrative_repository import (
 
 
 
-MODEL_VERSION = "narrative-rule-v1"
+MODEL_VERSION = "narrative-rule-v3"
+
 
 
 
@@ -35,22 +36,50 @@ def generate_business_narrative(
 
 
 
-    strengths = analysis.strengths or []
-
-    weaknesses = analysis.weaknesses or []
+    topic_sentiment = analysis.topic_sentiment or []
 
 
 
-    positive_items = [
-        item["label"]
-        for item in strengths
-    ]
+    positive_topics = []
+
+    negative_topics = []
 
 
-    negative_items = [
-        item["label"]
-        for item in weaknesses
-    ]
+
+    for item in topic_sentiment:
+
+
+        label = item.get(
+            "label"
+        )
+
+
+        sentiment = item.get(
+            "sentiment"
+        )
+
+
+        if sentiment == "positive":
+
+
+            if label not in positive_topics:
+
+                positive_topics.append(
+                    label
+                )
+
+
+
+        elif sentiment == "negative":
+
+
+            if label not in negative_topics:
+
+                negative_topics.append(
+                    label
+                )
+
+
 
 
 
@@ -58,27 +87,34 @@ def generate_business_narrative(
 
 
 
-    if positive_items:
+    total_reviews = analysis.total_reviews
+
+
+
+    if positive_topics:
+
 
         summary_parts.append(
 
-            "بیشترین رضایت مشتریان مربوط به "
+            f"از بین {total_reviews} تجربه ثبت‌شده، "
+            "مشتریان بیشترین رضایت را از "
             +
-            " و ".join(positive_items)
+            " و ".join(positive_topics)
             +
-            " بوده است."
+            " داشته‌اند."
 
         )
 
 
 
-    if negative_items:
+    if negative_topics:
+
 
         summary_parts.append(
 
-            "مهم‌ترین موارد قابل بهبود "
+            "مهم‌ترین فرصت بهبود، "
             +
-            " و ".join(negative_items)
+            " و ".join(negative_topics)
             +
             " است."
 
@@ -87,6 +123,7 @@ def generate_business_narrative(
 
 
     if not summary_parts:
+
 
         summary_parts.append(
 
@@ -100,54 +137,76 @@ def generate_business_narrative(
 
 
 
+
+
     positive_summary = None
 
-    if positive_items:
+
+    if positive_topics:
+
 
         positive_summary = (
 
             "نقاط قوت اصلی از نگاه مشتریان: "
             +
-            "، ".join(positive_items)
+            "، ".join(positive_topics)
 
         )
+
+
 
 
 
     improvement_summary = None
 
-    if negative_items:
+
+    if negative_topics:
+
 
         improvement_summary = (
 
             "فرصت‌های بهبود: "
             +
-            "، ".join(negative_items)
+            "، ".join(negative_topics)
 
         )
 
 
 
+
+
     trust_score = calculate_trust_score(
+
         analysis.total_reviews,
+
         analysis.customer_sentiment
+
     )
+
+
 
 
 
     data = {
 
+
         "summary": summary,
+
 
         "positive_summary": positive_summary,
 
+
         "improvement_summary": improvement_summary,
+
 
         "trust_score": trust_score,
 
+
         "model_version": MODEL_VERSION
 
+
     }
+
 
 
 
@@ -165,10 +224,18 @@ def generate_business_narrative(
 
 
 
+
+
+
+
 def calculate_trust_score(
+
     total_reviews: int,
+
     sentiment: dict
+
 ):
+
 
     if total_reviews == 0:
 
@@ -177,15 +244,23 @@ def calculate_trust_score(
 
 
     positive = sentiment.get(
+
         "positive",
+
         0
+
     )
+
 
 
     review_factor = min(
+
         total_reviews * 5,
+
         50
+
     )
+
 
 
     sentiment_factor = positive / 2
@@ -193,12 +268,19 @@ def calculate_trust_score(
 
 
     score = int(
+
         review_factor +
+
         sentiment_factor
+
     )
 
 
+
     return min(
+
         score,
+
         100
+
     )
