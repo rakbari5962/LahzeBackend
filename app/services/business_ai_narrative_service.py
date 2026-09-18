@@ -11,8 +11,9 @@ from app.repositories.business_ai_narrative_repository import (
 )
 
 
-
-MODEL_VERSION = "narrative-rule-v3"
+from app.services.gemini_review_service import (
+    generate_business_summary_with_gemini
+)
 
 
 
@@ -36,140 +37,49 @@ def generate_business_narrative(
 
 
 
-    topic_sentiment = analysis.topic_sentiment or []
+    analysis_payload = {
+
+    "strengths": [
+        {
+            "topic": item.get("name"),
+            "label": item.get("label"),
+            "mentions": item.get("mentions"),
+            "positive_mentions": item.get("positive_mentions")
+        }
+        for item in (analysis.strengths or [])
+    ],
+
+    "weaknesses": [
+        {
+            "topic": item.get("name"),
+            "label": item.get("label"),
+            "mentions": item.get("mentions"),
+            "negative_mentions": item.get("negative_mentions")
+        }
+        for item in (analysis.weaknesses or [])
+    ]
+
+    }
 
 
 
-    positive_topics = []
+    try:
 
-    negative_topics = []
-
-
-
-    for item in topic_sentiment:
-
-
-        label = item.get(
-            "label"
+        narrative_result = generate_business_summary_with_gemini(
+            analysis_payload
         )
 
+        model_version = "gemini-narrative-v1"
 
-        sentiment = item.get(
-            "sentiment"
+
+
+    except Exception:
+
+        narrative_result = generate_rule_based_summary(
+            analysis
         )
 
-
-        if sentiment == "positive":
-
-
-            if label not in positive_topics:
-
-                positive_topics.append(
-                    label
-                )
-
-
-
-        elif sentiment == "negative":
-
-
-            if label not in negative_topics:
-
-                negative_topics.append(
-                    label
-                )
-
-
-
-
-
-    summary_parts = []
-
-
-
-    total_reviews = analysis.total_reviews
-
-
-
-    if positive_topics:
-
-
-        summary_parts.append(
-
-            f"از بین {total_reviews} تجربه ثبت‌شده، "
-            "مشتریان بیشترین رضایت را از "
-            +
-            " و ".join(positive_topics)
-            +
-            " داشته‌اند."
-
-        )
-
-
-
-    if negative_topics:
-
-
-        summary_parts.append(
-
-            "مهم‌ترین فرصت بهبود، "
-            +
-            " و ".join(negative_topics)
-            +
-            " است."
-
-        )
-
-
-
-    if not summary_parts:
-
-
-        summary_parts.append(
-
-            "بر اساس تجربه‌های ثبت شده، اطلاعات کافی برای تحلیل دقیق وجود ندارد."
-
-        )
-
-
-
-    summary = " ".join(summary_parts)
-
-
-
-
-
-    positive_summary = None
-
-
-    if positive_topics:
-
-
-        positive_summary = (
-
-            "نقاط قوت اصلی از نگاه مشتریان: "
-            +
-            "، ".join(positive_topics)
-
-        )
-
-
-
-
-
-    improvement_summary = None
-
-
-    if negative_topics:
-
-
-        improvement_summary = (
-
-            "فرصت‌های بهبود: "
-            +
-            "، ".join(negative_topics)
-
-        )
+        model_version = "rule-based-fallback-v1"
 
 
 
@@ -189,23 +99,28 @@ def generate_business_narrative(
 
     data = {
 
-
-        "summary": summary,
-
-
-        "positive_summary": positive_summary,
+        "summary": narrative_result.get(
+            "summary"
+        ),
 
 
-        "improvement_summary": improvement_summary,
+        "positive_summary": narrative_result.get(
+            "positive_summary"
+        ),
+
+
+        "improvement_summary": narrative_result.get(
+            "improvement_summary"
+        ),
 
 
         "trust_score": trust_score,
 
 
-        "model_version": MODEL_VERSION
-
+        "model_version": model_version
 
     }
+
 
 
 
@@ -219,6 +134,124 @@ def generate_business_narrative(
         data=data
 
     )
+
+
+
+
+
+
+
+
+
+def generate_rule_based_summary(
+    analysis
+):
+
+
+    strengths = [
+
+        item.get("label")
+
+        for item in (analysis.strengths or [])
+
+        if isinstance(item, dict)
+
+    ]
+
+
+    weaknesses = [
+
+        item.get("label")
+
+        for item in (analysis.weaknesses or [])
+
+        if isinstance(item, dict)
+
+    ]
+
+
+
+    summary_parts = []
+
+
+
+    if strengths:
+
+        summary_parts.append(
+
+            "بر اساس بازخوردهای ثبت‌شده، "
+
+            "این مجموعه در زمینه "
+
+            +
+
+            " و ".join(strengths)
+
+            +
+
+            " بازخوردهای مثبتی دریافت کرده است."
+
+        )
+
+
+
+    if weaknesses:
+
+        summary_parts.append(
+
+            "بهبود "
+
+            +
+
+            " و ".join(weaknesses)
+
+            +
+
+            " می‌تواند به ارتقای تجربه مشتری کمک کند."
+
+        )
+
+
+
+    if not summary_parts:
+
+        summary_parts.append(
+
+            "بر اساس بازخوردهای ثبت‌شده، اطلاعات کافی برای تحلیل دقیق وجود ندارد."
+
+        )
+
+
+
+    return {
+
+
+        "summary": " ".join(summary_parts),
+
+
+        "positive_summary": (
+
+            "نقاط قوت اصلی: "
+
+            +
+
+            "، ".join(strengths)
+
+        ) if strengths else None,
+
+
+
+        "improvement_summary": (
+
+            "فرصت‌های بهبود: "
+
+            +
+
+            "، ".join(weaknesses)
+
+        ) if weaknesses else None
+
+    }
 
 
 
