@@ -51,3 +51,15 @@ from app.models.session import Session
 from app.models.category_ai_history import CategoryAIHistory
 
 from app.models.wallet_hold import WalletHold
+
+from app.models.review_attribute import ReviewAttribute
+
+from app.models.business_attribute_score import BusinessAttributeScore
+
+from app.models.error_definition import ErrorDefinition
+
+from app.models.error_occurrence import ErrorOccurrence
+
+from app.models.error_report import ErrorReport
+
+from app.models.no_show_report import NoShowReport

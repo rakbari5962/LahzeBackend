@@ -1,3 +1,13 @@
+import time
+
+from app.services.review_attribute_service import (
+    process_review_attributes
+)
+
+from app.services.attribute_extraction_service import (
+    extract_attributes_from_text
+)
+
 from sqlalchemy.orm import Session
 
 from app.models.review import Review
@@ -403,6 +413,10 @@ def analyze_business_reviews(
     business_id: int
 ):
 
+    start_time = time.time()
+
+    print("AI ANALYSIS START")
+
     reviews = db.query(Review).filter(
         Review.business_id == business_id
     ).all()
@@ -437,6 +451,10 @@ def analyze_business_reviews(
 
         }
 
+
+        start_time = time.time()
+
+        print("AI ANALYSIS START")
 
         return create_or_update_analysis(
             db,
@@ -693,7 +711,35 @@ def analyze_business_reviews(
 
     }
 
+    for review in reviews:
+        attribute_list = extract_attributes_from_text(
+            review.comment or ""
+        )
 
+
+        if attribute_list:
+
+            process_review_attributes(
+                db=db,
+                business_id=business_id,
+                attributes=attribute_list
+            )
+
+
+    if attribute_list:
+
+        process_review_attributes(
+            db=db,
+            business_id=business_id,
+            attributes=attribute_list
+        )
+
+        print(
+        "TOTAL ANALYSIS TIME:",
+        round(time.time() - start_time, 3),
+        "seconds"
+        )
+        
     return create_or_update_analysis(
 
         db=db,
@@ -703,3 +749,4 @@ def analyze_business_reviews(
         data=data
 
     )
+

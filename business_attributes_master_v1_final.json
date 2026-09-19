@@ -1,0 +1,2352 @@
+[
+  {
+    "key": "staff_behavior",
+    "label": "Staff Behavior",
+    "category": "staff"
+  },
+  {
+    "key": "staff_knowledge",
+    "label": "Staff Knowledge",
+    "category": "staff"
+  },
+  {
+    "key": "staff_professionalism",
+    "label": "Staff Professionalism",
+    "category": "staff"
+  },
+  {
+    "key": "staff_responsiveness",
+    "label": "Staff Responsiveness",
+    "category": "staff"
+  },
+  {
+    "key": "staff_availability",
+    "label": "Staff Availability",
+    "category": "staff"
+  },
+  {
+    "key": "staff_communication",
+    "label": "Staff Communication",
+    "category": "staff"
+  },
+  {
+    "key": "staff_efficiency",
+    "label": "Staff Efficiency",
+    "category": "staff"
+  },
+  {
+    "key": "staff_training",
+    "label": "Staff Training",
+    "category": "staff"
+  },
+  {
+    "key": "customer_attention",
+    "label": "Customer Attention",
+    "category": "service"
+  },
+  {
+    "key": "customer_care",
+    "label": "Customer Care",
+    "category": "service"
+  },
+  {
+    "key": "service_quality",
+    "label": "Service Quality",
+    "category": "service"
+  },
+  {
+    "key": "service_consistency",
+    "label": "Service Consistency",
+    "category": "service"
+  },
+  {
+    "key": "service_accuracy",
+    "label": "Service Accuracy",
+    "category": "service"
+  },
+  {
+    "key": "service_customization",
+    "label": "Service Customization",
+    "category": "service"
+  },
+  {
+    "key": "service_range",
+    "label": "Service Range",
+    "category": "service"
+  },
+  {
+    "key": "service_availability",
+    "label": "Service Availability",
+    "category": "service"
+  },
+  {
+    "key": "service_follow_up",
+    "label": "Service Follow Up",
+    "category": "service"
+  },
+  {
+    "key": "service_transparency",
+    "label": "Service Transparency",
+    "category": "service"
+  },
+  {
+    "key": "result_quality",
+    "label": "Result Quality",
+    "category": "quality"
+  },
+  {
+    "key": "product_quality",
+    "label": "Product Quality",
+    "category": "product"
+  },
+  {
+    "key": "product_freshness",
+    "label": "Product Freshness",
+    "category": "product"
+  },
+  {
+    "key": "product_selection",
+    "label": "Product Selection",
+    "category": "product"
+  },
+  {
+    "key": "product_availability",
+    "label": "Product Availability",
+    "category": "product"
+  },
+  {
+    "key": "product_accuracy",
+    "label": "Product Accuracy",
+    "category": "product"
+  },
+  {
+    "key": "product_condition",
+    "label": "Product Condition",
+    "category": "product"
+  },
+  {
+    "key": "product_durability",
+    "label": "Product Durability",
+    "category": "product"
+  },
+  {
+    "key": "product_authenticity",
+    "label": "Product Authenticity",
+    "category": "product"
+  },
+  {
+    "key": "product_presentation",
+    "label": "Product Presentation",
+    "category": "product"
+  },
+  {
+    "key": "product_packaging",
+    "label": "Product Packaging",
+    "category": "product"
+  },
+  {
+    "key": "price_fairness",
+    "label": "Price Fairness",
+    "category": "pricing"
+  },
+  {
+    "key": "price_level",
+    "label": "Price Level",
+    "category": "pricing"
+  },
+  {
+    "key": "value_for_money",
+    "label": "Value For Money",
+    "category": "pricing"
+  },
+  {
+    "key": "discount_availability",
+    "label": "Discount Availability",
+    "category": "pricing"
+  },
+  {
+    "key": "pricing_transparency",
+    "label": "Pricing Transparency",
+    "category": "pricing"
+  },
+  {
+    "key": "extra_charges",
+    "label": "Extra Charges",
+    "category": "pricing"
+  },
+  {
+    "key": "refund_policy",
+    "label": "Refund Policy",
+    "category": "pricing"
+  },
+  {
+    "key": "payment_flexibility",
+    "label": "Payment Flexibility",
+    "category": "payment"
+  },
+  {
+    "key": "payment_process",
+    "label": "Payment Process",
+    "category": "payment"
+  },
+  {
+    "key": "payment_options",
+    "label": "Payment Options",
+    "category": "payment"
+  },
+  {
+    "key": "checkout_speed",
+    "label": "Checkout Speed",
+    "category": "speed"
+  },
+  {
+    "key": "waiting_time",
+    "label": "Waiting Time",
+    "category": "speed"
+  },
+  {
+    "key": "service_speed",
+    "label": "Service Speed",
+    "category": "speed"
+  },
+  {
+    "key": "delivery_speed",
+    "label": "Delivery Speed",
+    "category": "speed"
+  },
+  {
+    "key": "appointment_speed",
+    "label": "Appointment Speed",
+    "category": "speed"
+  },
+  {
+    "key": "response_time",
+    "label": "Response Time",
+    "category": "speed"
+  },
+  {
+    "key": "booking_process",
+    "label": "Booking Process",
+    "category": "communication"
+  },
+  {
+    "key": "appointment_management",
+    "label": "Appointment Management",
+    "category": "communication"
+  },
+  {
+    "key": "confirmation_process",
+    "label": "Confirmation Process",
+    "category": "communication"
+  },
+  {
+    "key": "information_accuracy",
+    "label": "Information Accuracy",
+    "category": "communication"
+  },
+  {
+    "key": "communication_clarity",
+    "label": "Communication Clarity",
+    "category": "communication"
+  },
+  {
+    "key": "complaint_handling",
+    "label": "Complaint Handling",
+    "category": "service"
+  },
+  {
+    "key": "problem_resolution",
+    "label": "Problem Resolution",
+    "category": "reliability"
+  },
+  {
+    "key": "reliability",
+    "label": "Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "punctuality",
+    "label": "Punctuality",
+    "category": "reliability"
+  },
+  {
+    "key": "schedule_adherence",
+    "label": "Schedule Adherence",
+    "category": "reliability"
+  },
+  {
+    "key": "promise_fulfillment",
+    "label": "Promise Fulfillment",
+    "category": "reliability"
+  },
+  {
+    "key": "result_consistency",
+    "label": "Result Consistency",
+    "category": "quality"
+  },
+  {
+    "key": "cleanliness",
+    "label": "Cleanliness",
+    "category": "environment"
+  },
+  {
+    "key": "hygiene_standards",
+    "label": "Hygiene Standards",
+    "category": "safety"
+  },
+  {
+    "key": "environment_comfort",
+    "label": "Environment Comfort",
+    "category": "environment"
+  },
+  {
+    "key": "environment_design",
+    "label": "Environment Design",
+    "category": "environment"
+  },
+  {
+    "key": "atmosphere",
+    "label": "Atmosphere",
+    "category": "environment"
+  },
+  {
+    "key": "noise_level",
+    "label": "Noise Level",
+    "category": "environment"
+  },
+  {
+    "key": "privacy_level",
+    "label": "Privacy Level",
+    "category": "environment"
+  },
+  {
+    "key": "temperature_control",
+    "label": "Temperature Control",
+    "category": "facility"
+  },
+  {
+    "key": "lighting_quality",
+    "label": "Lighting Quality",
+    "category": "facility"
+  },
+  {
+    "key": "facility_cleanliness",
+    "label": "Facility Cleanliness",
+    "category": "facility"
+  },
+  {
+    "key": "facility_condition",
+    "label": "Facility Condition",
+    "category": "facility"
+  },
+  {
+    "key": "equipment_quality",
+    "label": "Equipment Quality",
+    "category": "facility"
+  },
+  {
+    "key": "equipment_condition",
+    "label": "Equipment Condition",
+    "category": "facility"
+  },
+  {
+    "key": "equipment_availability",
+    "label": "Equipment Availability",
+    "category": "facility"
+  },
+  {
+    "key": "facility_size",
+    "label": "Facility Size",
+    "category": "facility"
+  },
+  {
+    "key": "location_convenience",
+    "label": "Location Convenience",
+    "category": "location"
+  },
+  {
+    "key": "neighborhood_quality",
+    "label": "Neighborhood Quality",
+    "category": "location"
+  },
+  {
+    "key": "parking_availability",
+    "label": "Parking Availability",
+    "category": "accessibility"
+  },
+  {
+    "key": "parking_convenience",
+    "label": "Parking Convenience",
+    "category": "accessibility"
+  },
+  {
+    "key": "public_transport_access",
+    "label": "Public Transport Access",
+    "category": "accessibility"
+  },
+  {
+    "key": "entrance_accessibility",
+    "label": "Entrance Accessibility",
+    "category": "accessibility"
+  },
+  {
+    "key": "wheelchair_access",
+    "label": "Wheelchair Access",
+    "category": "accessibility"
+  },
+  {
+    "key": "opening_hours",
+    "label": "Opening Hours",
+    "category": "accessibility"
+  },
+  {
+    "key": "availability_hours",
+    "label": "Availability Hours",
+    "category": "accessibility"
+  },
+  {
+    "key": "online_access",
+    "label": "Online Access",
+    "category": "technology"
+  },
+  {
+    "key": "website_quality",
+    "label": "Website Quality",
+    "category": "technology"
+  },
+  {
+    "key": "mobile_experience",
+    "label": "Mobile Experience",
+    "category": "technology"
+  },
+  {
+    "key": "digital_booking",
+    "label": "Digital Booking",
+    "category": "technology"
+  },
+  {
+    "key": "online_support",
+    "label": "Online Support",
+    "category": "technology"
+  },
+  {
+    "key": "data_security",
+    "label": "Data Security",
+    "category": "safety"
+  },
+  {
+    "key": "safety_standards",
+    "label": "Safety Standards",
+    "category": "safety"
+  },
+  {
+    "key": "security_measures",
+    "label": "Security Measures",
+    "category": "safety"
+  },
+  {
+    "key": "customer_experience",
+    "label": "Customer Experience",
+    "category": "experience"
+  },
+  {
+    "key": "overall_experience",
+    "label": "Overall Experience",
+    "category": "experience"
+  },
+  {
+    "key": "ease_of_use",
+    "label": "Ease Of Use",
+    "category": "experience"
+  },
+  {
+    "key": "personalization",
+    "label": "Personalization",
+    "category": "experience"
+  },
+  {
+    "key": "comfort_level",
+    "label": "Comfort Level",
+    "category": "experience"
+  },
+  {
+    "key": "repeat_visit_intent",
+    "label": "Repeat Visit Intent",
+    "category": "experience"
+  },
+  {
+    "key": "recommendation_factor",
+    "label": "Recommendation Factor",
+    "category": "experience"
+  },
+  {
+    "key": "staff_appearance",
+    "label": "Staff Appearance",
+    "category": "staff"
+  },
+  {
+    "key": "staff_cleanliness",
+    "label": "Staff Cleanliness",
+    "category": "staff"
+  },
+  {
+    "key": "staff_turnover",
+    "label": "Staff Turnover",
+    "category": "staff"
+  },
+  {
+    "key": "staff_courtesy",
+    "label": "Staff Courtesy",
+    "category": "staff"
+  },
+  {
+    "key": "staff_attention",
+    "label": "Staff Attention",
+    "category": "staff"
+  },
+  {
+    "key": "staff_coordination",
+    "label": "Staff Coordination",
+    "category": "staff"
+  },
+  {
+    "key": "staff_accountability",
+    "label": "Staff Accountability",
+    "category": "staff"
+  },
+  {
+    "key": "expertise_level",
+    "label": "Expertise Level",
+    "category": "quality"
+  },
+  {
+    "key": "professional_skill",
+    "label": "Professional Skill",
+    "category": "quality"
+  },
+  {
+    "key": "technical_knowledge",
+    "label": "Technical Knowledge",
+    "category": "quality"
+  },
+  {
+    "key": "diagnosis_accuracy",
+    "label": "Diagnosis Accuracy",
+    "category": "quality"
+  },
+  {
+    "key": "solution_effectiveness",
+    "label": "Solution Effectiveness",
+    "category": "quality"
+  },
+  {
+    "key": "workmanship_quality",
+    "label": "Workmanship Quality",
+    "category": "quality"
+  },
+  {
+    "key": "attention_to_detail",
+    "label": "Attention To Detail",
+    "category": "quality"
+  },
+  {
+    "key": "customization_accuracy",
+    "label": "Customization Accuracy",
+    "category": "quality"
+  },
+  {
+    "key": "material_quality",
+    "label": "Material Quality",
+    "category": "product"
+  },
+  {
+    "key": "ingredient_quality",
+    "label": "Ingredient Quality",
+    "category": "product"
+  },
+  {
+    "key": "food_taste",
+    "label": "Food Taste",
+    "category": "product"
+  },
+  {
+    "key": "food_temperature",
+    "label": "Food Temperature",
+    "category": "product"
+  },
+  {
+    "key": "food_portion_size",
+    "label": "Food Portion Size",
+    "category": "product"
+  },
+  {
+    "key": "menu_variety",
+    "label": "Menu Variety",
+    "category": "product"
+  },
+  {
+    "key": "menu_accuracy",
+    "label": "Menu Accuracy",
+    "category": "product"
+  },
+  {
+    "key": "drink_quality",
+    "label": "Drink Quality",
+    "category": "product"
+  },
+  {
+    "key": "room_cleanliness",
+    "label": "Room Cleanliness",
+    "category": "environment"
+  },
+  {
+    "key": "room_comfort",
+    "label": "Room Comfort",
+    "category": "environment"
+  },
+  {
+    "key": "room_size",
+    "label": "Room Size",
+    "category": "facility"
+  },
+  {
+    "key": "bed_quality",
+    "label": "Bed Quality",
+    "category": "facility"
+  },
+  {
+    "key": "bathroom_quality",
+    "label": "Bathroom Quality",
+    "category": "facility"
+  },
+  {
+    "key": "view_quality",
+    "label": "View Quality",
+    "category": "environment"
+  },
+  {
+    "key": "noise_isolation",
+    "label": "Noise Isolation",
+    "category": "facility"
+  },
+  {
+    "key": "air_quality",
+    "label": "Air Quality",
+    "category": "environment"
+  },
+  {
+    "key": "odor_control",
+    "label": "Odor Control",
+    "category": "environment"
+  },
+  {
+    "key": "maintenance_quality",
+    "label": "Maintenance Quality",
+    "category": "reliability"
+  },
+  {
+    "key": "repair_quality",
+    "label": "Repair Quality",
+    "category": "quality"
+  },
+  {
+    "key": "repair_accuracy",
+    "label": "Repair Accuracy",
+    "category": "quality"
+  },
+  {
+    "key": "repair_duration",
+    "label": "Repair Duration",
+    "category": "speed"
+  },
+  {
+    "key": "repair_cost",
+    "label": "Repair Cost",
+    "category": "pricing"
+  },
+  {
+    "key": "warranty_service",
+    "label": "Warranty Service",
+    "category": "reliability"
+  },
+  {
+    "key": "warranty_duration",
+    "label": "Warranty Duration",
+    "category": "reliability"
+  },
+  {
+    "key": "after_sales_support",
+    "label": "After Sales Support",
+    "category": "service"
+  },
+  {
+    "key": "service_guarantee",
+    "label": "Service Guarantee",
+    "category": "reliability"
+  },
+  {
+    "key": "appointment_availability",
+    "label": "Appointment Availability",
+    "category": "accessibility"
+  },
+  {
+    "key": "appointment_flexibility",
+    "label": "Appointment Flexibility",
+    "category": "accessibility"
+  },
+  {
+    "key": "appointment_accuracy",
+    "label": "Appointment Accuracy",
+    "category": "communication"
+  },
+  {
+    "key": "queue_management",
+    "label": "Queue Management",
+    "category": "speed"
+  },
+  {
+    "key": "crowd_level",
+    "label": "Crowd Level",
+    "category": "environment"
+  },
+  {
+    "key": "service_capacity",
+    "label": "Service Capacity",
+    "category": "service"
+  },
+  {
+    "key": "reservation_system",
+    "label": "Reservation System",
+    "category": "technology"
+  },
+  {
+    "key": "notification_quality",
+    "label": "Notification Quality",
+    "category": "communication"
+  },
+  {
+    "key": "instruction_clarity",
+    "label": "Instruction Clarity",
+    "category": "communication"
+  },
+  {
+    "key": "documentation_quality",
+    "label": "Documentation Quality",
+    "category": "communication"
+  },
+  {
+    "key": "contract_transparency",
+    "label": "Contract Transparency",
+    "category": "communication"
+  },
+  {
+    "key": "estimate_accuracy",
+    "label": "Estimate Accuracy",
+    "category": "pricing"
+  },
+  {
+    "key": "billing_accuracy",
+    "label": "Billing Accuracy",
+    "category": "payment"
+  },
+  {
+    "key": "invoice_clarity",
+    "label": "Invoice Clarity",
+    "category": "payment"
+  },
+  {
+    "key": "payment_security",
+    "label": "Payment Security",
+    "category": "payment"
+  },
+  {
+    "key": "cashless_payment",
+    "label": "Cashless Payment",
+    "category": "payment"
+  },
+  {
+    "key": "payment_confirmation",
+    "label": "Payment Confirmation",
+    "category": "payment"
+  },
+  {
+    "key": "subscription_management",
+    "label": "Subscription Management",
+    "category": "payment"
+  },
+  {
+    "key": "membership_value",
+    "label": "Membership Value",
+    "category": "pricing"
+  },
+  {
+    "key": "membership_flexibility",
+    "label": "Membership Flexibility",
+    "category": "pricing"
+  },
+  {
+    "key": "training_program_quality",
+    "label": "Training Program Quality",
+    "category": "service"
+  },
+  {
+    "key": "trainer_quality",
+    "label": "Trainer Quality",
+    "category": "staff"
+  },
+  {
+    "key": "class_size",
+    "label": "Class Size",
+    "category": "facility"
+  },
+  {
+    "key": "learning_progress",
+    "label": "Learning Progress",
+    "category": "quality"
+  },
+  {
+    "key": "course_content",
+    "label": "Course Content",
+    "category": "service"
+  },
+  {
+    "key": "teaching_method",
+    "label": "Teaching Method",
+    "category": "service"
+  },
+  {
+    "key": "instructor_support",
+    "label": "Instructor Support",
+    "category": "staff"
+  },
+  {
+    "key": "class_schedule",
+    "label": "Class Schedule",
+    "category": "accessibility"
+  },
+  {
+    "key": "learning_materials",
+    "label": "Learning Materials",
+    "category": "product"
+  },
+  {
+    "key": "consultation_quality",
+    "label": "Consultation Quality",
+    "category": "service"
+  },
+  {
+    "key": "doctor_expertise",
+    "label": "Doctor Expertise",
+    "category": "quality"
+  },
+  {
+    "key": "treatment_effectiveness",
+    "label": "Treatment Effectiveness",
+    "category": "quality"
+  },
+  {
+    "key": "diagnosis_process",
+    "label": "Diagnosis Process",
+    "category": "service"
+  },
+  {
+    "key": "treatment_explanation",
+    "label": "Treatment Explanation",
+    "category": "communication"
+  },
+  {
+    "key": "patient_safety",
+    "label": "Patient Safety",
+    "category": "safety"
+  },
+  {
+    "key": "clinic_hygiene",
+    "label": "Clinic Hygiene",
+    "category": "safety"
+  },
+  {
+    "key": "equipment_safety",
+    "label": "Equipment Safety",
+    "category": "safety"
+  },
+  {
+    "key": "appointment_wait",
+    "label": "Appointment Wait",
+    "category": "speed"
+  },
+  {
+    "key": "treatment_duration",
+    "label": "Treatment Duration",
+    "category": "speed"
+  },
+  {
+    "key": "location_visibility",
+    "label": "Location Visibility",
+    "category": "location"
+  },
+  {
+    "key": "signage_quality",
+    "label": "Signage Quality",
+    "category": "location"
+  },
+  {
+    "key": "access_route",
+    "label": "Access Route",
+    "category": "location"
+  },
+  {
+    "key": "delivery_accuracy",
+    "label": "Delivery Accuracy",
+    "category": "service"
+  },
+  {
+    "key": "delivery_condition",
+    "label": "Delivery Condition",
+    "category": "product"
+  },
+  {
+    "key": "delivery_tracking",
+    "label": "Delivery Tracking",
+    "category": "technology"
+  },
+  {
+    "key": "delivery_options",
+    "label": "Delivery Options",
+    "category": "accessibility"
+  },
+  {
+    "key": "packaging_quality",
+    "label": "Packaging Quality",
+    "category": "product"
+  },
+  {
+    "key": "availability_prediction",
+    "label": "Availability Prediction",
+    "category": "technology"
+  },
+  {
+    "key": "system_reliability",
+    "label": "System Reliability",
+    "category": "technology"
+  },
+  {
+    "key": "app_performance",
+    "label": "App Performance",
+    "category": "technology"
+  },
+  {
+    "key": "digital_payment",
+    "label": "Digital Payment",
+    "category": "technology"
+  },
+  {
+    "key": "account_management",
+    "label": "Account Management",
+    "category": "technology"
+  },
+  {
+    "key": "user_interface",
+    "label": "User Interface",
+    "category": "technology"
+  },
+  {
+    "key": "data_accuracy",
+    "label": "Data Accuracy",
+    "category": "technology"
+  },
+  {
+    "key": "staff_integrity",
+    "label": "Staff Integrity",
+    "category": "staff"
+  },
+  {
+    "key": "staff_honesty",
+    "label": "Staff Honesty",
+    "category": "staff"
+  },
+  {
+    "key": "staff_language",
+    "label": "Staff Language",
+    "category": "staff"
+  },
+  {
+    "key": "manager_responsiveness",
+    "label": "Manager Responsiveness",
+    "category": "staff"
+  },
+  {
+    "key": "management_quality",
+    "label": "Management Quality",
+    "category": "staff"
+  },
+  {
+    "key": "staff_supervision",
+    "label": "Staff Supervision",
+    "category": "staff"
+  },
+  {
+    "key": "employee_retention",
+    "label": "Employee Retention",
+    "category": "staff"
+  },
+  {
+    "key": "service_personalization",
+    "label": "Service Personalization",
+    "category": "service"
+  },
+  {
+    "key": "service_flexibility",
+    "label": "Service Flexibility",
+    "category": "service"
+  },
+  {
+    "key": "service_completeness",
+    "label": "Service Completeness",
+    "category": "service"
+  },
+  {
+    "key": "service_process",
+    "label": "Service Process",
+    "category": "service"
+  },
+  {
+    "key": "service_efficiency",
+    "label": "Service Efficiency",
+    "category": "service"
+  },
+  {
+    "key": "service_scope",
+    "label": "Service Scope",
+    "category": "service"
+  },
+  {
+    "key": "service_recommendation",
+    "label": "Service Recommendation",
+    "category": "service"
+  },
+  {
+    "key": "service_outcome",
+    "label": "Service Outcome",
+    "category": "quality"
+  },
+  {
+    "key": "quality_control",
+    "label": "Quality Control",
+    "category": "quality"
+  },
+  {
+    "key": "quality_standard",
+    "label": "Quality Standard",
+    "category": "quality"
+  },
+  {
+    "key": "quality_improvement",
+    "label": "Quality Improvement",
+    "category": "quality"
+  },
+  {
+    "key": "performance_accuracy",
+    "label": "Performance Accuracy",
+    "category": "quality"
+  },
+  {
+    "key": "performance_consistency",
+    "label": "Performance Consistency",
+    "category": "quality"
+  },
+  {
+    "key": "long_term_quality",
+    "label": "Long Term Quality",
+    "category": "quality"
+  },
+  {
+    "key": "material_safety",
+    "label": "Material Safety",
+    "category": "safety"
+  },
+  {
+    "key": "ingredient_safety",
+    "label": "Ingredient Safety",
+    "category": "safety"
+  },
+  {
+    "key": "allergen_handling",
+    "label": "Allergen Handling",
+    "category": "safety"
+  },
+  {
+    "key": "sanitation_process",
+    "label": "Sanitation Process",
+    "category": "safety"
+  },
+  {
+    "key": "safety_equipment",
+    "label": "Safety Equipment",
+    "category": "safety"
+  },
+  {
+    "key": "emergency_response",
+    "label": "Emergency Response",
+    "category": "safety"
+  },
+  {
+    "key": "security_presence",
+    "label": "Security Presence",
+    "category": "safety"
+  },
+  {
+    "key": "product_design",
+    "label": "Product Design",
+    "category": "product"
+  },
+  {
+    "key": "product_features",
+    "label": "Product Features",
+    "category": "product"
+  },
+  {
+    "key": "product_usability",
+    "label": "Product Usability",
+    "category": "product"
+  },
+  {
+    "key": "product_performance",
+    "label": "Product Performance",
+    "category": "product"
+  },
+  {
+    "key": "product_size",
+    "label": "Product Size",
+    "category": "product"
+  },
+  {
+    "key": "product_color",
+    "label": "Product Color",
+    "category": "product"
+  },
+  {
+    "key": "product_options",
+    "label": "Product Options",
+    "category": "product"
+  },
+  {
+    "key": "product_value",
+    "label": "Product Value",
+    "category": "product"
+  },
+  {
+    "key": "brand_reputation",
+    "label": "Brand Reputation",
+    "category": "experience"
+  },
+  {
+    "key": "brand_trust",
+    "label": "Brand Trust",
+    "category": "experience"
+  },
+  {
+    "key": "customer_loyalty",
+    "label": "Customer Loyalty",
+    "category": "experience"
+  },
+  {
+    "key": "customer_retention",
+    "label": "Customer Retention",
+    "category": "experience"
+  },
+  {
+    "key": "customer_expectation",
+    "label": "Customer Expectation",
+    "category": "experience"
+  },
+  {
+    "key": "first_impression",
+    "label": "First Impression",
+    "category": "experience"
+  },
+  {
+    "key": "return_experience",
+    "label": "Return Experience",
+    "category": "service"
+  },
+  {
+    "key": "exchange_process",
+    "label": "Exchange Process",
+    "category": "service"
+  },
+  {
+    "key": "complaint_response",
+    "label": "Complaint Response",
+    "category": "communication"
+  },
+  {
+    "key": "feedback_handling",
+    "label": "Feedback Handling",
+    "category": "communication"
+  },
+  {
+    "key": "customer_updates",
+    "label": "Customer Updates",
+    "category": "communication"
+  },
+  {
+    "key": "communication_speed",
+    "label": "Communication Speed",
+    "category": "speed"
+  },
+  {
+    "key": "contact_availability",
+    "label": "Contact Availability",
+    "category": "communication"
+  },
+  {
+    "key": "phone_support",
+    "label": "Phone Support",
+    "category": "communication"
+  },
+  {
+    "key": "email_support",
+    "label": "Email Support",
+    "category": "communication"
+  },
+  {
+    "key": "chat_support",
+    "label": "Chat Support",
+    "category": "communication"
+  },
+  {
+    "key": "location_parking",
+    "label": "Location Parking",
+    "category": "location"
+  },
+  {
+    "key": "location_safety",
+    "label": "Location Safety",
+    "category": "location"
+  },
+  {
+    "key": "location_cleanliness",
+    "label": "Location Cleanliness",
+    "category": "location"
+  },
+  {
+    "key": "location_size",
+    "label": "Location Size",
+    "category": "location"
+  },
+  {
+    "key": "location_access",
+    "label": "Location Access",
+    "category": "location"
+  },
+  {
+    "key": "nearby_services",
+    "label": "Nearby Services",
+    "category": "location"
+  },
+  {
+    "key": "traffic_access",
+    "label": "Traffic Access",
+    "category": "accessibility"
+  },
+  {
+    "key": "entrance_visibility",
+    "label": "Entrance Visibility",
+    "category": "accessibility"
+  },
+  {
+    "key": "service_area",
+    "label": "Service Area",
+    "category": "accessibility"
+  },
+  {
+    "key": "delivery_coverage",
+    "label": "Delivery Coverage",
+    "category": "accessibility"
+  },
+  {
+    "key": "pickup_options",
+    "label": "Pickup Options",
+    "category": "accessibility"
+  },
+  {
+    "key": "operating_hours",
+    "label": "Operating Hours",
+    "category": "accessibility"
+  },
+  {
+    "key": "holiday_availability",
+    "label": "Holiday Availability",
+    "category": "accessibility"
+  },
+  {
+    "key": "facility_layout",
+    "label": "Facility Layout",
+    "category": "facility"
+  },
+  {
+    "key": "facility_equipment",
+    "label": "Facility Equipment",
+    "category": "facility"
+  },
+  {
+    "key": "facility_capacity",
+    "label": "Facility Capacity",
+    "category": "facility"
+  },
+  {
+    "key": "facility_modernity",
+    "label": "Facility Modernity",
+    "category": "facility"
+  },
+  {
+    "key": "facility_access",
+    "label": "Facility Access",
+    "category": "facility"
+  },
+  {
+    "key": "restroom_quality",
+    "label": "Restroom Quality",
+    "category": "facility"
+  },
+  {
+    "key": "seating_comfort",
+    "label": "Seating Comfort",
+    "category": "facility"
+  },
+  {
+    "key": "workspace_comfort",
+    "label": "Workspace Comfort",
+    "category": "facility"
+  },
+  {
+    "key": "internet_quality",
+    "label": "Internet Quality",
+    "category": "technology"
+  },
+  {
+    "key": "wifi_availability",
+    "label": "WiFi Availability",
+    "category": "technology"
+  },
+  {
+    "key": "system_speed",
+    "label": "System Speed",
+    "category": "technology"
+  },
+  {
+    "key": "technology_integration",
+    "label": "Technology Integration",
+    "category": "technology"
+  },
+  {
+    "key": "digital_accuracy",
+    "label": "Digital Accuracy",
+    "category": "technology"
+  },
+  {
+    "key": "online_information",
+    "label": "Online Information",
+    "category": "technology"
+  },
+  {
+    "key": "website_navigation",
+    "label": "Website Navigation",
+    "category": "technology"
+  },
+  {
+    "key": "app_usability",
+    "label": "App Usability",
+    "category": "technology"
+  },
+  {
+    "key": "data_privacy",
+    "label": "Data Privacy",
+    "category": "safety"
+  },
+  {
+    "key": "identity_verification",
+    "label": "Identity Verification",
+    "category": "safety"
+  },
+  {
+    "key": "access_control",
+    "label": "Access Control",
+    "category": "safety"
+  },
+  {
+    "key": "safety_information",
+    "label": "Safety Information",
+    "category": "communication"
+  },
+  {
+    "key": "policy_clarity",
+    "label": "Policy Clarity",
+    "category": "communication"
+  },
+  {
+    "key": "terms_transparency",
+    "label": "Terms Transparency",
+    "category": "communication"
+  },
+  {
+    "key": "availability_accuracy",
+    "label": "Availability Accuracy",
+    "category": "reliability"
+  },
+  {
+    "key": "stock_reliability",
+    "label": "Stock Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "order_accuracy",
+    "label": "Order Accuracy",
+    "category": "reliability"
+  },
+  {
+    "key": "reservation_reliability",
+    "label": "Reservation Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "delivery_reliability",
+    "label": "Delivery Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "service_reliability",
+    "label": "Service Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "staff_response_time",
+    "label": "Staff Response Time",
+    "category": "staff"
+  },
+  {
+    "key": "staff_problem_solving",
+    "label": "Staff Problem Solving",
+    "category": "staff"
+  },
+  {
+    "key": "staff_follow_up",
+    "label": "Staff Follow Up",
+    "category": "staff"
+  },
+  {
+    "key": "staff_consistency",
+    "label": "Staff Consistency",
+    "category": "staff"
+  },
+  {
+    "key": "staff_reliability",
+    "label": "Staff Reliability",
+    "category": "staff"
+  },
+  {
+    "key": "staff_experience",
+    "label": "Staff Experience",
+    "category": "staff"
+  },
+  {
+    "key": "staff_specialization",
+    "label": "Staff Specialization",
+    "category": "staff"
+  },
+  {
+    "key": "staff_availability_schedule",
+    "label": "Staff Availability Schedule",
+    "category": "staff"
+  },
+  {
+    "key": "service_value",
+    "label": "Service Value",
+    "category": "service"
+  },
+  {
+    "key": "service_timeliness",
+    "label": "Service Timeliness",
+    "category": "speed"
+  },
+  {
+    "key": "service_delivery",
+    "label": "Service Delivery",
+    "category": "service"
+  },
+  {
+    "key": "service_documentation",
+    "label": "Service Documentation",
+    "category": "service"
+  },
+  {
+    "key": "service_tracking",
+    "label": "Service Tracking",
+    "category": "technology"
+  },
+  {
+    "key": "service_updates",
+    "label": "Service Updates",
+    "category": "communication"
+  },
+  {
+    "key": "service_instructions",
+    "label": "Service Instructions",
+    "category": "communication"
+  },
+  {
+    "key": "product_availability_accuracy",
+    "label": "Product Availability Accuracy",
+    "category": "product"
+  },
+  {
+    "key": "product_quality_control",
+    "label": "Product Quality Control",
+    "category": "product"
+  },
+  {
+    "key": "product_replacement",
+    "label": "Product Replacement",
+    "category": "service"
+  },
+  {
+    "key": "product_return_process",
+    "label": "Product Return Process",
+    "category": "service"
+  },
+  {
+    "key": "product_comparison",
+    "label": "Product Comparison",
+    "category": "product"
+  },
+  {
+    "key": "product_information",
+    "label": "Product Information",
+    "category": "communication"
+  },
+  {
+    "key": "product_recommendation",
+    "label": "Product Recommendation",
+    "category": "product"
+  },
+  {
+    "key": "product_customization",
+    "label": "Product Customization",
+    "category": "product"
+  },
+  {
+    "key": "product_delivery_time",
+    "label": "Product Delivery Time",
+    "category": "speed"
+  },
+  {
+    "key": "price_comparison",
+    "label": "Price Comparison",
+    "category": "pricing"
+  },
+  {
+    "key": "price_stability",
+    "label": "Price Stability",
+    "category": "pricing"
+  },
+  {
+    "key": "price_negotiation",
+    "label": "Price Negotiation",
+    "category": "pricing"
+  },
+  {
+    "key": "pricing_accuracy",
+    "label": "Pricing Accuracy",
+    "category": "pricing"
+  },
+  {
+    "key": "tax_transparency",
+    "label": "Tax Transparency",
+    "category": "pricing"
+  },
+  {
+    "key": "fee_transparency",
+    "label": "Fee Transparency",
+    "category": "pricing"
+  },
+  {
+    "key": "coupon_usage",
+    "label": "Coupon Usage",
+    "category": "pricing"
+  },
+  {
+    "key": "membership_price",
+    "label": "Membership Price",
+    "category": "pricing"
+  },
+  {
+    "key": "payment_speed",
+    "label": "Payment Speed",
+    "category": "payment"
+  },
+  {
+    "key": "payment_accuracy",
+    "label": "Payment Accuracy",
+    "category": "payment"
+  },
+  {
+    "key": "payment_receipt",
+    "label": "Payment Receipt",
+    "category": "payment"
+  },
+  {
+    "key": "refund_speed",
+    "label": "Refund Speed",
+    "category": "payment"
+  },
+  {
+    "key": "refund_process",
+    "label": "Refund Process",
+    "category": "payment"
+  },
+  {
+    "key": "payment_failure_handling",
+    "label": "Payment Failure Handling",
+    "category": "payment"
+  },
+  {
+    "key": "queue_length",
+    "label": "Queue Length",
+    "category": "speed"
+  },
+  {
+    "key": "processing_speed",
+    "label": "Processing Speed",
+    "category": "speed"
+  },
+  {
+    "key": "response_delay",
+    "label": "Response Delay",
+    "category": "speed"
+  },
+  {
+    "key": "delivery_delay",
+    "label": "Delivery Delay",
+    "category": "speed"
+  },
+  {
+    "key": "appointment_delay",
+    "label": "Appointment Delay",
+    "category": "speed"
+  },
+  {
+    "key": "setup_time",
+    "label": "Setup Time",
+    "category": "speed"
+  },
+  {
+    "key": "repair_wait_time",
+    "label": "Repair Wait Time",
+    "category": "speed"
+  },
+  {
+    "key": "communication_frequency",
+    "label": "Communication Frequency",
+    "category": "communication"
+  },
+  {
+    "key": "message_clarity",
+    "label": "Message Clarity",
+    "category": "communication"
+  },
+  {
+    "key": "language_support",
+    "label": "Language Support",
+    "category": "communication"
+  },
+  {
+    "key": "customer_notification",
+    "label": "Customer Notification",
+    "category": "communication"
+  },
+  {
+    "key": "contact_methods",
+    "label": "Contact Methods",
+    "category": "communication"
+  },
+  {
+    "key": "information_completeness",
+    "label": "Information Completeness",
+    "category": "communication"
+  },
+  {
+    "key": "response_accuracy",
+    "label": "Response Accuracy",
+    "category": "communication"
+  },
+  {
+    "key": "communication_consistency",
+    "label": "Communication Consistency",
+    "category": "communication"
+  },
+  {
+    "key": "trustworthiness",
+    "label": "Trustworthiness",
+    "category": "reliability"
+  },
+  {
+    "key": "service_history",
+    "label": "Service History",
+    "category": "reliability"
+  },
+  {
+    "key": "availability_reliability",
+    "label": "Availability Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "appointment_reliability",
+    "label": "Appointment Reliability",
+    "category": "reliability"
+  },
+  {
+    "key": "staff_replacement",
+    "label": "Staff Replacement",
+    "category": "reliability"
+  },
+  {
+    "key": "maintenance_frequency",
+    "label": "Maintenance Frequency",
+    "category": "reliability"
+  },
+  {
+    "key": "facility_maintenance",
+    "label": "Facility Maintenance",
+    "category": "facility"
+  },
+  {
+    "key": "equipment_maintenance",
+    "label": "Equipment Maintenance",
+    "category": "facility"
+  },
+  {
+    "key": "facility_organization",
+    "label": "Facility Organization",
+    "category": "facility"
+  },
+  {
+    "key": "facility_storage",
+    "label": "Facility Storage",
+    "category": "facility"
+  },
+  {
+    "key": "facility_privacy",
+    "label": "Facility Privacy",
+    "category": "facility"
+  },
+  {
+    "key": "facility_security",
+    "label": "Facility Security",
+    "category": "facility"
+  },
+  {
+    "key": "facility_technology",
+    "label": "Facility Technology",
+    "category": "facility"
+  },
+  {
+    "key": "environment_cleanliness",
+    "label": "Environment Cleanliness",
+    "category": "environment"
+  },
+  {
+    "key": "environment_safety",
+    "label": "Environment Safety",
+    "category": "environment"
+  },
+  {
+    "key": "environment_privacy",
+    "label": "Environment Privacy",
+    "category": "environment"
+  },
+  {
+    "key": "environment_space",
+    "label": "Environment Space",
+    "category": "environment"
+  },
+  {
+    "key": "environment_organization",
+    "label": "Environment Organization",
+    "category": "environment"
+  },
+  {
+    "key": "environment_appearance",
+    "label": "Environment Appearance",
+    "category": "environment"
+  },
+  {
+    "key": "location_distance",
+    "label": "Location Distance",
+    "category": "location"
+  },
+  {
+    "key": "location_accessibility",
+    "label": "Location Accessibility",
+    "category": "location"
+  },
+  {
+    "key": "location_environment",
+    "label": "Location Environment",
+    "category": "location"
+  },
+  {
+    "key": "location_landmark",
+    "label": "Location Landmark",
+    "category": "location"
+  },
+  {
+    "key": "location_navigation",
+    "label": "Location Navigation",
+    "category": "location"
+  },
+  {
+    "key": "location_transport",
+    "label": "Location Transport",
+    "category": "location"
+  },
+  {
+    "key": "technology_reliability",
+    "label": "Technology Reliability",
+    "category": "technology"
+  },
+  {
+    "key": "technology_speed",
+    "label": "Technology Speed",
+    "category": "technology"
+  },
+  {
+    "key": "technology_access",
+    "label": "Technology Access",
+    "category": "technology"
+  },
+  {
+    "key": "digital_service_quality",
+    "label": "Digital Service Quality",
+    "category": "technology"
+  },
+  {
+    "key": "online_ordering",
+    "label": "Online Ordering",
+    "category": "technology"
+  },
+  {
+    "key": "account_security",
+    "label": "Account Security",
+    "category": "technology"
+  },
+  {
+    "key": "digital_support",
+    "label": "Digital Support",
+    "category": "technology"
+  },
+  {
+    "key": "system_availability",
+    "label": "System Availability",
+    "category": "technology"
+  },
+  {
+    "key": "user_account",
+    "label": "User Account",
+    "category": "technology"
+  },
+  {
+    "key": "customer_records",
+    "label": "Customer Records",
+    "category": "technology"
+  },
+  {
+    "key": "review_response",
+    "label": "Review Response",
+    "category": "communication"
+  },
+  {
+    "key": "online_reputation",
+    "label": "Online Reputation",
+    "category": "experience"
+  },
+  {
+    "key": "brand_presence",
+    "label": "Brand Presence",
+    "category": "experience"
+  },
+  {
+    "key": "community_involvement",
+    "label": "Community Involvement",
+    "category": "experience"
+  },
+  {
+    "key": "staff_shift_management",
+    "label": "Staff Shift Management",
+    "category": "staff"
+  },
+  {
+    "key": "staff_training_quality",
+    "label": "Staff Training Quality",
+    "category": "staff"
+  },
+  {
+    "key": "staff_service_style",
+    "label": "Staff Service Style",
+    "category": "staff"
+  },
+  {
+    "key": "staff_response_quality",
+    "label": "Staff Response Quality",
+    "category": "staff"
+  },
+  {
+    "key": "staff_customer_focus",
+    "label": "Staff Customer Focus",
+    "category": "staff"
+  },
+  {
+    "key": "staff_decision_making",
+    "label": "Staff Decision Making",
+    "category": "staff"
+  },
+  {
+    "key": "staff_availability_quality",
+    "label": "Staff Availability Quality",
+    "category": "staff"
+  },
+  {
+    "key": "staff_service_speed",
+    "label": "Staff Service Speed",
+    "category": "staff"
+  },
+  {
+    "key": "service_accessibility",
+    "label": "Service Accessibility",
+    "category": "service"
+  },
+  {
+    "key": "service_availability_check",
+    "label": "Service Availability Check",
+    "category": "service"
+  },
+  {
+    "key": "service_quality_assurance",
+    "label": "Service Quality Assurance",
+    "category": "quality"
+  },
+  {
+    "key": "service_completion",
+    "label": "Service Completion",
+    "category": "service"
+  },
+  {
+    "key": "service_accuracy_check",
+    "label": "Service Accuracy Check",
+    "category": "quality"
+  },
+  {
+    "key": "service_consultation",
+    "label": "Service Consultation",
+    "category": "service"
+  },
+  {
+    "key": "service_explanation",
+    "label": "Service Explanation",
+    "category": "communication"
+  },
+  {
+    "key": "service_comparison",
+    "label": "Service Comparison",
+    "category": "service"
+  },
+  {
+    "key": "service_value_assessment",
+    "label": "Service Value Assessment",
+    "category": "pricing"
+  },
+  {
+    "key": "product_replacement_speed",
+    "label": "Product Replacement Speed",
+    "category": "speed"
+  },
+  {
+    "key": "product_quality_assurance",
+    "label": "Product Quality Assurance",
+    "category": "product"
+  },
+  {
+    "key": "product_storage",
+    "label": "Product Storage",
+    "category": "product"
+  },
+  {
+    "key": "product_availability_check",
+    "label": "Product Availability Check",
+    "category": "product"
+  },
+  {
+    "key": "product_display",
+    "label": "Product Display",
+    "category": "product"
+  },
+  {
+    "key": "product_completeness",
+    "label": "Product Completeness",
+    "category": "product"
+  },
+  {
+    "key": "product_instructions",
+    "label": "Product Instructions",
+    "category": "communication"
+  },
+  {
+    "key": "product_support",
+    "label": "Product Support",
+    "category": "service"
+  },
+  {
+    "key": "quality_certification",
+    "label": "Quality Certification",
+    "category": "quality"
+  },
+  {
+    "key": "quality_inspection",
+    "label": "Quality Inspection",
+    "category": "quality"
+  },
+  {
+    "key": "quality_monitoring",
+    "label": "Quality Monitoring",
+    "category": "quality"
+  },
+  {
+    "key": "quality_reliability",
+    "label": "Quality Reliability",
+    "category": "quality"
+  },
+  {
+    "key": "quality_expectation_match",
+    "label": "Quality Expectation Match",
+    "category": "quality"
+  },
+  {
+    "key": "cleaning_frequency",
+    "label": "Cleaning Frequency",
+    "category": "environment"
+  },
+  {
+    "key": "cleaning_quality",
+    "label": "Cleaning Quality",
+    "category": "environment"
+  },
+  {
+    "key": "hygiene_equipment",
+    "label": "Hygiene Equipment",
+    "category": "safety"
+  },
+  {
+    "key": "hygiene_process",
+    "label": "Hygiene Process",
+    "category": "safety"
+  },
+  {
+    "key": "safety_compliance",
+    "label": "Safety Compliance",
+    "category": "safety"
+  },
+  {
+    "key": "safety_training",
+    "label": "Safety Training",
+    "category": "safety"
+  },
+  {
+    "key": "security_quality",
+    "label": "Security Quality",
+    "category": "safety"
+  },
+  {
+    "key": "facility_availability",
+    "label": "Facility Availability",
+    "category": "facility"
+  },
+  {
+    "key": "facility_condition_check",
+    "label": "Facility Condition Check",
+    "category": "facility"
+  },
+  {
+    "key": "facility_upgrade",
+    "label": "Facility Upgrade",
+    "category": "facility"
+  },
+  {
+    "key": "facility_equipment_quality",
+    "label": "Facility Equipment Quality",
+    "category": "facility"
+  },
+  {
+    "key": "facility_resource_availability",
+    "label": "Facility Resource Availability",
+    "category": "facility"
+  },
+  {
+    "key": "accessibility_features",
+    "label": "Accessibility Features",
+    "category": "accessibility"
+  },
+  {
+    "key": "accessibility_support",
+    "label": "Accessibility Support",
+    "category": "accessibility"
+  },
+  {
+    "key": "parking_cost",
+    "label": "Parking Cost",
+    "category": "pricing"
+  },
+  {
+    "key": "transport_convenience",
+    "label": "Transport Convenience",
+    "category": "accessibility"
+  },
+  {
+    "key": "location_reputation",
+    "label": "Location Reputation",
+    "category": "location"
+  },
+  {
+    "key": "location_access_route",
+    "label": "Location Access Route",
+    "category": "location"
+  },
+  {
+    "key": "digital_availability",
+    "label": "Digital Availability",
+    "category": "technology"
+  },
+  {
+    "key": "technology_support",
+    "label": "Technology Support",
+    "category": "technology"
+  },
+  {
+    "key": "software_usability",
+    "label": "Software Usability",
+    "category": "technology"
+  },
+  {
+    "key": "system_response_time",
+    "label": "System Response Time",
+    "category": "technology"
+  },
+  {
+    "key": "online_availability",
+    "label": "Online Availability",
+    "category": "technology"
+  },
+  {
+    "key": "digital_information",
+    "label": "Digital Information",
+    "category": "technology"
+  },
+  {
+    "key": "communication_reliability",
+    "label": "Communication Reliability",
+    "category": "communication"
+  },
+  {
+    "key": "communication_access",
+    "label": "Communication Access",
+    "category": "communication"
+  },
+  {
+    "key": "communication_personalization",
+    "label": "Communication Personalization",
+    "category": "communication"
+  },
+  {
+    "key": "communication_follow_up",
+    "label": "Communication Follow Up",
+    "category": "communication"
+  },
+  {
+    "key": "information_availability",
+    "label": "Information Availability",
+    "category": "communication"
+  },
+  {
+    "key": "information_consistency",
+    "label": "Information Consistency",
+    "category": "communication"
+  },
+  {
+    "key": "billing_transparency",
+    "label": "Billing Transparency",
+    "category": "payment"
+  },
+  {
+    "key": "payment_convenience",
+    "label": "Payment Convenience",
+    "category": "payment"
+  },
+  {
+    "key": "payment_availability",
+    "label": "Payment Availability",
+    "category": "payment"
+  },
+  {
+    "key": "payment_processing",
+    "label": "Payment Processing",
+    "category": "payment"
+  },
+  {
+    "key": "payment_options_range",
+    "label": "Payment Options Range",
+    "category": "payment"
+  },
+  {
+    "key": "refund_transparency",
+    "label": "Refund Transparency",
+    "category": "payment"
+  },
+  {
+    "key": "reliability_history",
+    "label": "Reliability History",
+    "category": "reliability"
+  },
+  {
+    "key": "failure_frequency",
+    "label": "Failure Frequency",
+    "category": "reliability"
+  },
+  {
+    "key": "service_stability",
+    "label": "Service Stability",
+    "category": "reliability"
+  },
+  {
+    "key": "availability_stability",
+    "label": "Availability Stability",
+    "category": "reliability"
+  },
+  {
+    "key": "commitment_followthrough",
+    "label": "Commitment Follow Through",
+    "category": "reliability"
+  },
+  {
+    "key": "customer_effort",
+    "label": "Customer Effort",
+    "category": "experience"
+  },
+  {
+    "key": "customer_journey",
+    "label": "Customer Journey",
+    "category": "experience"
+  },
+  {
+    "key": "ease_of_booking",
+    "label": "Ease Of Booking",
+    "category": "experience"
+  },
+  {
+    "key": "ease_of_payment",
+    "label": "Ease Of Payment",
+    "category": "experience"
+  },
+  {
+    "key": "ease_of_return",
+    "label": "Ease Of Return",
+    "category": "experience"
+  },
+  {
+    "key": "experience_consistency",
+    "label": "Experience Consistency",
+    "category": "experience"
+  },
+  {
+    "key": "customer_convenience",
+    "label": "Customer Convenience",
+    "category": "experience"
+  },
+  {
+    "key": "customer_control",
+    "label": "Customer Control",
+    "category": "experience"
+  },
+  {
+    "key": "overall_value",
+    "label": "Overall Value",
+    "category": "experience"
+  },
+  {
+    "key": "business_reputation",
+    "label": "Business Reputation",
+    "category": "experience"
+  },
+  {
+    "key": "local_presence",
+    "label": "Local Presence",
+    "category": "experience"
+  },
+  {
+    "key": "community_service",
+    "label": "Community Service",
+    "category": "other"
+  },
+  {
+    "key": "environment_friendliness",
+    "label": "Environment Friendliness",
+    "category": "environment"
+  },
+  {
+    "key": "sustainability_practice",
+    "label": "Sustainability Practice",
+    "category": "other"
+  },
+  {
+    "key": "eco_friendly_operation",
+    "label": "Eco Friendly Operation",
+    "category": "other"
+  },
+  {
+    "key": "business_hours_accuracy",
+    "label": "Business Hours Accuracy",
+    "category": "accessibility"
+  },
+  {
+    "key": "holiday_schedule",
+    "label": "Holiday Schedule",
+    "category": "accessibility"
+  },
+  {
+    "key": "special_request_handling",
+    "label": "Special Request Handling",
+    "category": "service"
+  },
+  {
+    "key": "custom_request_support",
+    "label": "Custom Request Support",
+    "category": "service"
+  },
+  {
+    "key": "customer_preference_handling",
+    "label": "Customer Preference Handling",
+    "category": "service"
+  },
+  {
+    "key": "issue_resolution_speed",
+    "label": "Issue Resolution Speed",
+    "category": "speed"
+  },
+  {
+    "key": "business_transparency",
+    "label": "Business Transparency",
+    "category": "communication"
+  },
+  {
+    "key": "operational_consistency",
+    "label": "Operational Consistency",
+    "category": "reliability"
+  }
+]

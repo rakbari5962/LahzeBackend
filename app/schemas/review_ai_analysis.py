@@ -21,6 +21,7 @@ class ReviewAIAnalysisResponse(BaseModel):
 
     customer_sentiment: Dict[str, Any]
 
+    attribute_summary: Optional[Dict[str, Any]] = None
 
     model_version: Optional[str] = None
 

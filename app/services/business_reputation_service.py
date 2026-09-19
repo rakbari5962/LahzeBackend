@@ -31,12 +31,6 @@ def get_business_reputation(
 
         "average_rating": analysis.average_rating,
 
-        "strengths": analysis.strengths or [],
-
-        "weaknesses": analysis.weaknesses or [],
-
-        "themes": analysis.themes or [],
-
         "customer_sentiment": analysis.customer_sentiment or {},
 
         "model_version": analysis.model_version

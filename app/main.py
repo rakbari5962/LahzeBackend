@@ -1,3 +1,5 @@
+from app.api.routes.public_business import router as public_business_router
+
 from app.api.routes.business_ai_narrative import router as business_ai_narrative_router
 
 from app.api.routes.business_reputation import router as business_reputation_router
@@ -41,10 +43,6 @@ from app.database.database import SessionLocal
 
 
 from app.services.error_service import record_error
-
-
-
-
 
 from app.api.routes.admin_errors import router as admin_errors_router
 
@@ -95,6 +93,10 @@ from app.api.routes.business_status_auto_update import router as business_status
 from app.api.routes.marketplace_opportunities import router as marketplace_opportunities_router
 
 from app.api.routes.business_visibility import router as business_visibility_router
+
+from app.api.routes.customer_insights import router as customer_insights_router
+
+from app.api.routes.business_attributes import router as business_attributes_router
 
 
 
@@ -287,6 +289,10 @@ app.include_router(
     business_reputation_router
 )
 
+app.include_router(
+    public_business_router
+)
+
 
 app.include_router(
     admin_release_router
@@ -427,6 +433,14 @@ app.include_router(
     business_visibility_router
 )
 
+app.include_router(
+    business_attributes_router
+)
+
+
+app.include_router(
+    customer_insights_router
+)
 
 
 app.include_router(
