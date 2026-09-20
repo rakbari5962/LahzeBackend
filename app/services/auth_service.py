@@ -39,7 +39,7 @@ from app.core.errors.error_codes import ErrorCodes
 
 
 
-OTP_EXPIRE_MINUTES = 2
+OTP_EXPIRE_MINUTES = 10
 
 
 

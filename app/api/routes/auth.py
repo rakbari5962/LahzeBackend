@@ -118,6 +118,7 @@ def verify_otp_code(
 
     if result["requires_city_selection"]:
 
+        session = result["session"]
 
         return {
 
@@ -127,9 +128,12 @@ def verify_otp_code(
 
             "user_id": user.id,
 
-            "phone_number": user.phone_number
+            "phone_number": user.phone_number,
+
+            "session_token": session.token
 
         }
+
 
 
 

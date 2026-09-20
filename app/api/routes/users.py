@@ -9,14 +9,16 @@ from app.database.dependencies import get_db
 from app.schemas.user import (
     UserCreate,
     UserResponse,
-    UserCityUpdate
+    UserCityUpdate,
+    UserOpportunityProfileUpdate
 )
 
 
 from app.repositories.user_repository import (
     create_user,
     get_user,
-    update_user_city
+    update_user_city,
+    update_user_profile
 )
 
 
@@ -66,6 +68,8 @@ def create_new_user(
         user
 
     )
+
+
 
 
 
@@ -189,6 +193,78 @@ def update_current_user_city(
 
 
     return updated_user
+
+
+
+
+
+
+
+
+
+
+@router.patch(
+
+    "/me/profile",
+
+    response_model=UserResponse
+
+)
+def update_current_user_profile(
+
+    profile_data: UserOpportunityProfileUpdate,
+
+    token: str,
+
+    db: Session = Depends(get_db)
+
+):
+
+
+    session = get_login_session(
+
+        db=db,
+
+        token=token
+
+    )
+
+
+    if not session:
+
+        raise Exception(
+
+            "User not logged in"
+
+        )
+
+
+
+    updated_user = update_user_profile(
+
+        db=db,
+
+        user_id=session.user_id,
+
+        profile_data=profile_data
+
+    )
+
+
+
+    if not updated_user:
+
+        raise Exception(
+
+            "User not found"
+
+        )
+
+
+
+    return updated_user
+
+
 
 
 

@@ -4,6 +4,7 @@ from sqlalchemy import (
     String,
     Boolean,
     DateTime,
+    Date,
     ForeignKey
 )
 
@@ -44,6 +45,48 @@ class User(Base):
         index=True
 
     )
+
+    first_name = Column(
+    String,
+    nullable=True
+)
+
+
+    last_name = Column(
+        String,
+        nullable=True
+    )
+
+
+    gender = Column(
+        String,
+        nullable=True
+    )
+
+
+    birth_date = Column(
+        Date,
+        nullable=True
+    )
+
+
+    iban = Column(
+        String,
+        nullable=True
+    )
+
+
+    education = Column(
+        String,
+        nullable=True
+    )
+
+
+    email = Column(
+        String,
+        nullable=True
+    )
+
 
 
     province_id = Column(
