@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 
 from sqlalchemy.orm import Session
 
 from app.database.dependencies import get_db
+from app.database.database import SessionLocal
 
 from app.schemas.review import (
     ReviewCreate,
@@ -15,11 +16,56 @@ from app.repositories.review_repository import (
     get_user_reviews
 )
 
+from app.services.review_ai_analysis_service import (
+    analyze_business_reviews
+)
+
+from app.services.business_ai_narrative_service import (
+    generate_business_narrative
+)
+
+
 
 router = APIRouter(
     prefix="/reviews",
     tags=["Reviews"]
 )
+
+
+
+def run_review_ai_pipeline(
+    business_id: int
+):
+
+    db = SessionLocal()
+
+    try:
+
+        analyze_business_reviews(
+            db=db,
+            business_id=business_id
+        )
+
+
+        generate_business_narrative(
+            db=db,
+            business_id=business_id
+        )
+
+
+    except Exception as e:
+
+        print(
+            "BACKGROUND AI PIPELINE ERROR:",
+            str(e)
+        )
+
+
+    finally:
+
+        db.close()
+
+
 
 
 
@@ -29,6 +75,7 @@ router = APIRouter(
 )
 def create_new_review(
     review: ReviewCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
 
@@ -57,6 +104,15 @@ def create_new_review(
             status_code=400,
             detail=errors[result["error"]]
         )
+
+
+    business_id = result.business_id
+
+
+    background_tasks.add_task(
+        run_review_ai_pipeline,
+        business_id
+    )
 
 
     return result

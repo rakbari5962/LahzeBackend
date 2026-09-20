@@ -19,16 +19,6 @@ from app.repositories.reward_event_repository import (
 )
 
 
-from app.services.review_ai_analysis_service import (
-    analyze_business_reviews
-)
-
-
-from app.services.business_ai_narrative_service import (
-    generate_business_narrative
-)
-
-
 
 def create_review(
     db: Session,
@@ -110,7 +100,6 @@ def create_review(
         )
 
 
-
         # ایجاد Reward Event
 
         create_reward_event(
@@ -130,30 +119,6 @@ def create_review(
             idempotency_key=f"REVIEW_REWARD_{db_review.id}"
 
         )
-
-
-
-    # به‌روزرسانی تحلیل هوشمند اعتبار کسب‌وکار
-
-    analyze_business_reviews(
-
-        db=db,
-
-        business_id=booking.business_id
-
-    )
-
-
-
-    # تولید Narrative جدید برای نمایش به مشتری
-
-    generate_business_narrative(
-
-        db=db,
-
-        business_id=booking.business_id
-
-    )
 
 
 
