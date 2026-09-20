@@ -15,27 +15,39 @@ class BusinessPublicInfo(BaseModel):
 
 
 
-class CustomerInsightItem(BaseModel):
 
-    label: str
+
+class CustomerExperienceItem(BaseModel):
+
+    title: str
+
+    status: Literal[
+        "strength",
+        "improvement"
+    ]
+
+    percentage: float
 
     mentions: int
 
-    score: float
-
-    confidence: Literal[
-        "low",
-        "medium",
-        "high"
+    color: Literal[
+        "green",
+        "red"
     ]
 
 
 
-class CustomerInsights(BaseModel):
 
-    strengths: List[CustomerInsightItem]
 
-    weaknesses: List[CustomerInsightItem]
+class CustomerExperience(BaseModel):
+
+    title: str
+
+    strengths: List[CustomerExperienceItem]
+
+    improvements: List[CustomerExperienceItem]
+
+
 
 
 
@@ -53,10 +65,12 @@ class ReputationSummary(BaseModel):
 
 
 
+
+
 class PublicBusinessProfileResponse(BaseModel):
 
     business: BusinessPublicInfo
 
     reputation: ReputationSummary
 
-    customer_insights: CustomerInsights
+    customer_experience: CustomerExperience

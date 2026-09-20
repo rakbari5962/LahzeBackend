@@ -11,8 +11,13 @@ from app.services.business_reputation_service import (
 )
 
 
-from app.services.business_attribute_service import (
-    get_business_attribute_summary
+from app.services.customer_insight_service import (
+    get_customer_insights
+)
+
+
+from app.services.customer_experience_formatter import (
+    format_customer_experience
 )
 
 
@@ -41,9 +46,16 @@ def get_public_business_profile(
     )
 
 
-    customer_insights = get_business_attribute_summary(
+
+    raw_insights = get_customer_insights(
         db=db,
         business_id=business_id
+    )
+
+
+
+    customer_experience = format_customer_experience(
+        raw_insights
     )
 
 
@@ -66,6 +78,6 @@ def get_public_business_profile(
         "reputation": reputation,
 
 
-        "customer_insights": customer_insights
+        "customer_experience": customer_experience
 
     }
