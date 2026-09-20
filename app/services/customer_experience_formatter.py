@@ -6,52 +6,143 @@ def format_customer_experience(
     into frontend-ready customer experience format.
     """
 
-    strengths = []
-
-    improvements = []
+    experiences = []
 
 
-    for item in insights.get("strengths", []):
+    all_items = (
+        insights.get("strengths", [])
+        +
+        insights.get("improvements", [])
+    )
 
-        strengths.append({
+
+    for item in all_items:
+
+
+        total_mentions = item.get(
+            "total_mentions",
+            0
+        )
+
+
+        positive_mentions = item.get(
+            "positive_mentions",
+            0
+        )
+
+
+        negative_mentions = item.get(
+            "negative_mentions",
+            0
+        )
+
+
+
+        # Backward compatibility
+        # until database contains sentiment split
+
+        if (
+            positive_mentions == 0
+            and negative_mentions == 0
+        ):
+
+            if item in insights.get("strengths", []):
+
+                positive_mentions = total_mentions
+
+            else:
+
+                negative_mentions = total_mentions
+
+
+
+        total = (
+            positive_mentions
+            +
+            negative_mentions
+        )
+
+
+
+        positive_percentage = (
+
+            round(
+                (
+                    positive_mentions
+                    /
+                    total
+                )
+                * 100
+            )
+
+            if total > 0
+
+            else 0
+
+        )
+
+
+
+        negative_percentage = (
+
+            round(
+                (
+                    negative_mentions
+                    /
+                    total
+                )
+                * 100
+            )
+
+            if total > 0
+
+            else 0
+
+        )
+
+
+
+        # Confidence based on number of customer mentions
+
+        if total >= 10:
+
+            confidence = "high"
+
+        elif total >= 5:
+
+            confidence = "medium"
+
+        else:
+
+            confidence = "low"
+
+
+
+        experiences.append({
 
             "title": item["label"],
 
-            "status": "strength",
+            "total_mentions": total,
 
-            "percentage": item["score"],
+            "positive_mentions": positive_mentions,
 
-            "mentions": item["total_mentions"],
+            "negative_mentions": negative_mentions,
 
-            "color": "green"
+            "positive_percentage": positive_percentage,
+
+            "negative_percentage": negative_percentage,
+
+            "confidence": confidence
 
         })
 
 
-
-    for item in insights.get("improvements", []):
-
-        improvements.append({
-
-            "title": item["label"],
-
-            "status": "improvement",
-
-            "percentage": item["score"],
-
-            "mentions": item["total_mentions"],
-
-            "color": "red"
-
-        })
 
 
     return {
 
         "title": "تجربه مشتریان",
 
-        "strengths": strengths,
-
-        "improvements": improvements
+        "items": experiences
 
     }

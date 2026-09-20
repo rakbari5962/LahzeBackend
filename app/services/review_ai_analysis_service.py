@@ -1,5 +1,9 @@
 import time
 
+from app.services.attribute_extraction_service import (
+    extract_attributes_from_text
+)
+
 from app.services.review_attribute_service import (
     process_review_attributes
 )
@@ -582,6 +586,7 @@ def analyze_business_reviews(
 
     strengths = []
     weaknesses = []
+    mixed_topics = []
     themes = []
     topic_sentiment = []
 
@@ -595,13 +600,20 @@ def analyze_business_reviews(
         label = TOPIC_LABELS[topic]
 
 
-        if stats["positive"] > stats["negative"]:
+        if stats["positive"] > 0 and stats["negative"] > 0:
+
+            sentiment = "mixed"
+
+
+        elif stats["positive"] > stats["negative"]:
 
             sentiment = "positive"
+
 
         elif stats["negative"] > stats["positive"]:
 
             sentiment = "negative"
+
 
         else:
 
@@ -632,7 +644,7 @@ def analyze_business_reviews(
         })
 
 
-        if sentiment == "positive":
+        if stats["positive"] > 0:
 
             strengths.append({
 
@@ -644,12 +656,15 @@ def analyze_business_reviews(
 
                 "positive_mentions": stats["positive"],
 
+                "negative_mentions": stats["negative"],
+
                 "evidence": stats["positive_evidence"]
 
             })
 
 
-        elif sentiment == "negative":
+
+        if stats["negative"] > 0:
 
             weaknesses.append({
 
@@ -659,11 +674,14 @@ def analyze_business_reviews(
 
                 "mentions": stats["mentions"],
 
+                "positive_mentions": stats["positive"],
+
                 "negative_mentions": stats["negative"],
 
                 "evidence": stats["negative_evidence"]
 
             })
+            
 
 
     customer_sentiment = {
@@ -711,42 +729,71 @@ def analyze_business_reviews(
 
     }
 
-    for review in reviews:
-        attribute_list = extract_attributes_from_text(
-            review.comment or ""
-        )
+    attribute_list = []
 
 
-        if attribute_list:
+    for topic, stats in topic_stats.items():
 
-            process_review_attributes(
-                db=db,
-                business_id=business_id,
-                attributes=attribute_list
-            )
+        for _ in range(stats["positive"]):
+
+            attribute_list.append({
+
+                "key": topic,
+
+                "label": TOPIC_LABELS[topic],
+
+                "sentiment": "positive"
+
+            })
+
+
+        for _ in range(stats["negative"]):
+
+            attribute_list.append({
+
+                "key": topic,
+
+                "label": TOPIC_LABELS[topic],
+
+                "sentiment": "negative"
+
+            })
+
 
 
     if attribute_list:
 
         process_review_attributes(
+
             db=db,
+
             business_id=business_id,
+
             attributes=attribute_list
+
         )
 
-        print(
+
+
+    print(
         "TOTAL ANALYSIS TIME:",
         round(time.time() - start_time, 3),
         "seconds"
-        )
-        
-    return create_or_update_analysis(
-
-        db=db,
-
-        business_id=business_id,
-
-        data=data
-
     )
 
+
+    return {
+
+        "strengths": strengths,
+
+        "weaknesses": weaknesses,
+
+        "themes": themes,
+
+        "topic_sentiment": topic_sentiment,
+
+        "customer_sentiment": customer_sentiment,
+
+        "model_version": MODEL_VERSION
+
+    }

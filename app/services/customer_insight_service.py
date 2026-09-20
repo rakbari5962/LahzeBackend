@@ -6,7 +6,7 @@ from app.repositories.business_attribute_score_repository import (
 
 
 MIN_MENTIONS = 2
-TOP_LIMIT = 3
+TOP_LIMIT = 10
 
 
 def get_customer_insights(
@@ -54,13 +54,13 @@ def get_customer_insights(
 
             "score": calculated_score,
 
-            "positive_count": score.positive_count,
+            "positive_mentions": score.positive_count,
 
-            "negative_count": score.negative_count,
+            "negative_mentions": score.negative_count,
 
             "total_mentions": total_mentions
 
-        }
+            }
 
 
         if calculated_score >= 80:

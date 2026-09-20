@@ -23,6 +23,7 @@ from app.services.customer_experience_formatter import (
 
 
 
+
 def get_public_business_profile(
     db: Session,
     business_id: int
@@ -40,10 +41,14 @@ def get_public_business_profile(
 
 
 
+
+
     reputation = get_business_reputation(
         db=db,
         business_id=business_id
     )
+
+
 
 
 
@@ -53,10 +58,22 @@ def get_public_business_profile(
     )
 
 
+    print("RAW INSIGHTS:")
+    print(raw_insights)
+
+
+
+
 
     customer_experience = format_customer_experience(
         raw_insights
     )
+
+
+    print("CUSTOMER EXPERIENCE:")
+    print(customer_experience)
+
+
 
 
 

@@ -53,6 +53,19 @@ def process_review_attributes(
             )
 
 
+        elif item["sentiment"] == "mixed":
+
+            increase_positive_count(
+                db=db,
+                score=score
+            )
+
+            increase_negative_count(
+                db=db,
+                score=score
+            )
+
+
         results.append(
             {
                 "attribute_id": attribute.id,

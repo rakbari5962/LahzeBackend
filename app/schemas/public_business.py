@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, Dict, Any, List, Literal
+from typing import Optional, Dict, Any, List
 
 
 
@@ -17,23 +17,23 @@ class BusinessPublicInfo(BaseModel):
 
 
 
+
 class CustomerExperienceItem(BaseModel):
 
     title: str
 
-    status: Literal[
-        "strength",
-        "improvement"
-    ]
+    total_mentions: int
 
-    percentage: float
+    positive_mentions: int
 
-    mentions: int
+    negative_mentions: int
 
-    color: Literal[
-        "green",
-        "red"
-    ]
+    positive_percentage: float
+
+    negative_percentage: float
+
+    confidence: str
+
 
 
 
@@ -43,9 +43,8 @@ class CustomerExperience(BaseModel):
 
     title: str
 
-    strengths: List[CustomerExperienceItem]
+    items: List[CustomerExperienceItem]
 
-    improvements: List[CustomerExperienceItem]
 
 
 
@@ -62,6 +61,7 @@ class ReputationSummary(BaseModel):
     customer_sentiment: Dict[str, Any]
 
     model_version: Optional[str] = None
+
 
 
 
