@@ -10,6 +10,7 @@ from app.models.account import Account
 from app.models.booking import Booking
 from app.models.business import Business
 from app.models.user import User
+from app.models.opportunity import Opportunity
 
 from app.schemas.notification import NotificationCreate
 
@@ -344,6 +345,24 @@ def cancel_confirmed_booking(
         platform_amount=platform_amount,
         settlement_reference_id=booking_id
     )
+
+    opportunity = db.query(Opportunity).filter(
+        Opportunity.id == booking.opportunity_id
+    ).first()
+
+
+    if opportunity:
+
+        if opportunity.reserved_count > 0:
+
+            opportunity.reserved_count -= 1
+
+
+        if opportunity.reserved_count < opportunity.capacity:
+
+            opportunity.status = "ACTIVE"
+
+
 
     booking.status = "CANCELLED"
 

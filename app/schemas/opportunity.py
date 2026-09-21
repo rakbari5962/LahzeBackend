@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class OpportunityCreate(BaseModel):
+
     business_id: int
     service_id: int
 
@@ -16,7 +17,9 @@ class OpportunityCreate(BaseModel):
     capacity: int
 
 
+
 class OpportunityResponse(BaseModel):
+
     id: int
 
     business_id: int
@@ -30,7 +33,9 @@ class OpportunityResponse(BaseModel):
     final_price: int
 
     capacity: int
+    reserved_count: int
     status: str
+
 
     class Config:
         from_attributes = True

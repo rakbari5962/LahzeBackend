@@ -4,11 +4,14 @@ from app.models.opportunity import Opportunity
 from app.schemas.opportunity import OpportunityCreate
 
 
+
 def create_opportunity(
     db: Session,
     opportunity: OpportunityCreate
 ):
+
     db_opportunity = Opportunity(
+
         business_id=opportunity.business_id,
         service_id=opportunity.service_id,
 
@@ -19,20 +22,29 @@ def create_opportunity(
         discount_percent=opportunity.discount_percent,
         final_price=opportunity.final_price,
 
-        capacity=opportunity.capacity
+        capacity=opportunity.capacity,
+        reserved_count=0
     )
 
+
     db.add(db_opportunity)
+
     db.commit()
+
     db.refresh(db_opportunity)
 
+
     return db_opportunity
+
+
+
 
 
 def get_opportunity(
     db: Session,
     opportunity_id: int
 ):
+
     return (
         db.query(Opportunity)
         .filter(
@@ -42,14 +54,50 @@ def get_opportunity(
     )
 
 
+
+
+
 def get_active_opportunities(
     db: Session
 ):
+
     return (
         db.query(Opportunity)
         .filter(
-            Opportunity.status == "ACTIVE",
-            Opportunity.capacity > 0
+            Opportunity.status != "EXPIRED"
         )
         .all()
     )
+
+
+
+
+
+def get_business_opportunities(
+    db: Session,
+    business_id: int
+):
+
+    print(
+        "SEARCH BUSINESS ID:",
+        business_id
+    )
+
+
+    result = (
+        db.query(Opportunity)
+        .filter(
+            Opportunity.business_id == business_id,
+            Opportunity.status != "EXPIRED"
+        )
+        .all()
+    )
+
+
+    print(
+        "FOUND OPPORTUNITIES:",
+        result
+    )
+
+
+    return result

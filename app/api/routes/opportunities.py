@@ -11,7 +11,8 @@ from app.schemas.opportunity import (
 from app.repositories.opportunity_repository import (
     create_opportunity,
     get_opportunity,
-    get_active_opportunities
+    get_active_opportunities,
+    get_business_opportunities
 )
 
 
@@ -56,4 +57,17 @@ def read_opportunity(
     return get_opportunity(
         db,
         opportunity_id
+    )
+
+@router.get(
+    "/business/{business_id}",
+    response_model=list[OpportunityResponse]
+)
+def read_business_opportunities(
+    business_id: int,
+    db: Session = Depends(get_db)
+):
+    return get_business_opportunities(
+        db,
+        business_id
     )

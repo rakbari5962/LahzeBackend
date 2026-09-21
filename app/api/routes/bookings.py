@@ -2,7 +2,7 @@ from app.schemas.no_show import (
     NoShowReportResponse
 )
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -30,9 +30,12 @@ from app.services.cancellation_service import (
     cancel_confirmed_booking
 )
 
-from app.services.no_show_service import (
-    report_no_show,
-    dispute_no_show
+from app.services.session_service import (
+    get_login_session
+)
+
+from app.repositories.user_repository import (
+    get_user
 )
 
 router = APIRouter(
@@ -66,14 +69,53 @@ def dispute_no_show_request(
 )
 def create_new_booking(
     booking: BookingCreate,
+    token: str,
     db: Session = Depends(get_db)
 ):
 
     print("BOOKING ROUTE HIT")
 
-    return create_booking(
+
+    session = get_login_session(
+        db=db,
+        token=token
+    )
+
+
+    if not session:
+
+        raise HTTPException(
+            status_code=401,
+            detail="LOGIN_REQUIRED"
+        )
+
+
+    user = get_user(
         db,
-        booking
+        session.user_id
+    )
+
+
+    if not user:
+
+        raise HTTPException(
+            status_code=404,
+            detail="USER_NOT_FOUND"
+        )
+
+
+    if not user.profile_completed:
+
+        raise HTTPException(
+            status_code=403,
+            detail="PROFILE_COMPLETION_REQUIRED"
+        )
+
+
+    return create_booking(
+            db,
+            booking,
+            session.user_id
     )
 
 

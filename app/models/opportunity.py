@@ -58,6 +58,18 @@ class Opportunity(Base):
         default=1
     )
 
+    reserved_count = Column(
+        Integer,
+        nullable=False,
+        default=0
+    )
+
+    status = Column(
+        String,
+        nullable=False,
+        default="ACTIVE"
+    )
+
     status = Column(
         String,
         nullable=False,

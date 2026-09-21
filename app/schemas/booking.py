@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class BookingCreate(BaseModel):
-    user_id: int
+
     opportunity_id: int
 
 

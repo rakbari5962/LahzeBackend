@@ -49,10 +49,15 @@ from app.services.settlement_service import (
 
 def create_booking(
     db: Session,
-    booking: BookingCreate
+    booking: BookingCreate,
+    user_id: int
 ):
 
-    print("CREATE BOOKING START", booking.user_id, booking.opportunity_id)
+    print(
+        "CREATE BOOKING START",
+        user_id,
+        booking.opportunity_id
+    )
 
     opportunity = db.query(Opportunity).filter(
         Opportunity.id == booking.opportunity_id
@@ -63,9 +68,29 @@ def create_booking(
         return None
 
 
+    if opportunity.status != "ACTIVE":
+
+        raise HTTPException(
+            status_code=400,
+            detail="Opportunity is not available"
+        )
+
+
+    if opportunity.reserved_count >= opportunity.capacity:
+
+        opportunity.status = "Full"
+
+        db.commit()
+
+        raise HTTPException(
+            status_code=400,
+            detail="Opportunity capacity is full"
+        )
+
+
 
     db_booking = Booking(
-        user_id=booking.user_id,
+        user_id=user_id,
         business_id=opportunity.business_id,
         opportunity_id=booking.opportunity_id,
         status="PENDING_CONFIRMATION"
@@ -81,14 +106,14 @@ def create_booking(
     # بلوکه کردن مبلغ در کیف پول مشتری
 
     print(
-    "BEFORE HOLD",
-    booking.user_id,
-    opportunity.final_price
+        "BEFORE HOLD",
+        user_id,
+        opportunity.final_price
     )
 
     hold = create_booking_hold(
         db=db,
-        user_id=booking.user_id,
+        user_id=user_id,
         booking_id=db_booking.id,
         amount=opportunity.final_price
     )
@@ -105,6 +130,15 @@ def create_booking(
              status_code=400,
              detail="Insufficient wallet balance"
          )
+    opportunity.reserved_count += 1
+
+
+    if opportunity.reserved_count >= opportunity.capacity:
+
+        opportunity.status = "Full"
+
+
+    db.commit()
 
 
     # ایجاد کمیسیون‌های معرفی به صورت PENDING
@@ -436,6 +470,26 @@ def cancel_booking(
         )
 
 
+        opportunity = db.query(Opportunity).filter(
+            Opportunity.id == booking.opportunity_id
+        ).first()
+
+
+        if opportunity:
+
+
+            if opportunity.reserved_count > 0:
+
+                opportunity.reserved_count -= 1
+
+
+
+            if opportunity.reserved_count < opportunity.capacity:
+
+                opportunity.status = "ACTIVE"
+
+
+
         booking.status = "CANCELLED"
 
 
@@ -445,6 +499,7 @@ def cancel_booking(
 
 
         db.commit()
+
         db.refresh(booking)
 
 
