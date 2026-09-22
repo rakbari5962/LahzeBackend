@@ -10,6 +10,7 @@ from app.models.account import Account
 from app.models.booking import Booking
 from app.models.business import Business
 from app.models.user import User
+from app.models.wallet_hold import WalletHold
 from app.models.opportunity import Opportunity
 
 from app.schemas.notification import NotificationCreate
@@ -446,11 +447,61 @@ def cancel_pending_booking(
         Booking.id == booking_id
     ).first()
 
+
     if not booking:
         return None
 
+
     if booking.status != "PENDING_CONFIRMATION":
         return None
+
+
+
+    # -----------------------------
+    # Release Wallet Hold
+    # -----------------------------
+
+    hold = db.query(WalletHold).filter(
+        WalletHold.booking_id == booking_id,
+        WalletHold.status == "ACTIVE"
+    ).first()
+
+
+    if hold:
+
+        hold.status = "RELEASED"
+
+        hold.released_at = datetime.now(
+            timezone.utc
+        )
+
+
+
+    # -----------------------------
+    # Restore Opportunity Capacity
+    # -----------------------------
+
+    opportunity = db.query(Opportunity).filter(
+        Opportunity.id == booking.opportunity_id
+    ).first()
+
+
+    if opportunity:
+
+        if opportunity.reserved_count > 0:
+
+            opportunity.reserved_count -= 1
+
+
+        if opportunity.reserved_count < opportunity.capacity:
+
+            opportunity.status = "ACTIVE"
+
+
+
+    # -----------------------------
+    # Cancel Booking
+    # -----------------------------
 
     booking.status = "CANCELLED"
 
@@ -458,8 +509,11 @@ def cancel_pending_booking(
         timezone.utc
     )
 
+
     db.commit()
+
     db.refresh(booking)
+
 
     return booking
 
