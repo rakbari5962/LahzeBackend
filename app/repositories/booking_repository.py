@@ -78,7 +78,7 @@ def create_booking(
 
     if opportunity.reserved_count >= opportunity.capacity:
 
-        opportunity.status = "Full"
+        opportunity.status = "FULL"
 
         db.commit()
 
@@ -135,7 +135,7 @@ def create_booking(
 
     if opportunity.reserved_count >= opportunity.capacity:
 
-        opportunity.status = "Full"
+        opportunity.status = "FULL"
 
 
     db.commit()
