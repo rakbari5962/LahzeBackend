@@ -149,3 +149,12 @@ def get_user_reviews(
     return db.query(Review).filter(
         Review.user_id == user_id
     ).all()
+
+def get_booking_review(
+    db: Session,
+    booking_id: int
+):
+
+    return db.query(Review).filter(
+        Review.booking_id == booking_id
+    ).first()

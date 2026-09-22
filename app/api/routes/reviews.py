@@ -13,7 +13,8 @@ from app.schemas.review import (
 from app.repositories.review_repository import (
     create_review,
     get_business_reviews,
-    get_user_reviews
+    get_user_reviews,
+    get_booking_review
 )
 
 from app.services.review_ai_analysis_service import (
@@ -118,7 +119,19 @@ def create_new_review(
     return result
 
 
+@router.get(
+    "/booking/{booking_id}",
+    response_model=ReviewResponse | None
+)
+def read_booking_review(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
 
+    return get_booking_review(
+        db,
+        booking_id
+    )
 
 
 @router.get(

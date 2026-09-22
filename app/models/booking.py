@@ -6,6 +6,8 @@ from sqlalchemy import (
     ForeignKey
 )
 
+from sqlalchemy.orm import relationship
+
 from sqlalchemy.sql import func
 
 from app.database.database import Base
@@ -65,4 +67,13 @@ class Booking(Base):
     cancelled_at = Column(
         DateTime(timezone=True),
         nullable=True
+    )
+
+    business = relationship(
+        "Business"
+    )
+
+
+    opportunity = relationship(
+        "Opportunity"
     )

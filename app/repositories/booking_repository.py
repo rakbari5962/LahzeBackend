@@ -1,3 +1,4 @@
+from sqlalchemy.orm import joinedload
 from app.repositories.business_priority_access_repository import (
     create_priority_access,
     has_first_customer_access
@@ -15,8 +16,11 @@ from app.models.booking import Booking
 from app.models.opportunity import Opportunity
 from app.models.business import Business
 from app.models.user import User
+from app.models.wallet_hold import WalletHold
 
-from app.schemas.booking import BookingCreate
+from app.schemas.booking import (
+    BookingCreate
+)
 from app.schemas.notification import NotificationCreate
 
 from app.repositories.notification_repository import create_notification
@@ -228,9 +232,55 @@ def get_booking(
     booking_id: int
 ):
 
-    return db.query(Booking).filter(
-        Booking.id == booking_id
+    booking = db.query(Booking)\
+        .options(
+            joinedload(Booking.business),
+            joinedload(Booking.opportunity)
+        )\
+        .filter(
+            Booking.id == booking_id
+        )\
+        .first()
+
+
+    if not booking:
+        return None
+
+
+
+    wallet_hold = db.query(WalletHold).filter(
+        WalletHold.booking_id == booking_id
     ).first()
+
+
+
+    return {
+        "id": booking.id,
+
+        "user_id": booking.user_id,
+
+        "business_id": booking.business_id,
+
+        "opportunity_id": booking.opportunity_id,
+
+        "status": booking.status,
+
+        "created_at": booking.created_at,
+
+        "confirmed_at": booking.confirmed_at,
+
+        "completed_at": booking.completed_at,
+
+        "cancelled_at": booking.cancelled_at,
+
+
+        "business": booking.business,
+
+        "opportunity": booking.opportunity,
+
+
+        "wallet_hold": wallet_hold
+    }
 
 
 
@@ -241,9 +291,58 @@ def get_user_bookings(
     user_id: int
 ):
 
-    return db.query(Booking).filter(
+    bookings = db.query(Booking).filter(
         Booking.user_id == user_id
+    ).order_by(
+        Booking.created_at.desc()
     ).all()
+
+
+    result = []
+
+
+    for booking in bookings:
+
+
+        business = db.query(Business).filter(
+            Business.id == booking.business_id
+        ).first()
+
+
+        opportunity = db.query(Opportunity).filter(
+            Opportunity.id == booking.opportunity_id
+        ).first()
+
+
+        result.append(
+            {
+                "id": booking.id,
+
+                "user_id": booking.user_id,
+
+                "business_id": booking.business_id,
+
+                "opportunity_id": booking.opportunity_id,
+
+                "status": booking.status,
+
+                "created_at": booking.created_at,
+
+                "confirmed_at": booking.confirmed_at,
+
+                "completed_at": booking.completed_at,
+
+                "cancelled_at": booking.cancelled_at,
+
+
+                "business": business,
+
+                "opportunity": opportunity
+            }
+        )
+
+
+    return result
 
 
 
