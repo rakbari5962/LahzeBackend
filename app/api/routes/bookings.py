@@ -2,6 +2,12 @@ from app.schemas.no_show import (
     NoShowReportResponse
 )
 
+from app.services.no_show_service import (
+    report_no_show,
+    dispute_no_show
+)
+
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
