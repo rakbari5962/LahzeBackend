@@ -1,3 +1,4 @@
+import time
 import os
 import json
 
@@ -16,6 +17,140 @@ client = genai.Client(
 MODEL_NAME = "models/gemini-flash-latest"
 
 FALLBACK_MODEL = "models/gemini-flash-lite-latest"
+
+
+
+ALLOWED_TOPICS = {
+
+    "quality": {
+        "category": "service_quality",
+        "label": "کیفیت خدمات"
+    },
+
+    "staff_behavior": {
+        "category": "customer_experience",
+        "label": "برخورد پرسنل"
+    },
+
+    "price": {
+        "category": "pricing",
+        "label": "قیمت"
+    },
+
+    "value": {
+        "category": "price_perception",
+        "label": "ارزش نسبت به قیمت"
+    },
+
+    "waiting_time": {
+        "category": "operations",
+        "label": "زمان انتظار"
+    },
+
+    "cleanliness": {
+        "category": "environment",
+        "label": "نظافت و محیط"
+    },
+
+    "equipment": {
+        "category": "facilities",
+        "label": "تجهیزات و امکانات"
+    },
+
+    "communication": {
+        "category": "customer_experience",
+        "label": "ارتباط با مشتری"
+    },
+
+    "support": {
+        "category": "customer_support",
+        "label": "پشتیبانی"
+    },
+
+    "delivery": {
+        "category": "fulfillment",
+        "label": "تحویل"
+    },
+
+    "booking": {
+        "category": "booking_experience",
+        "label": "رزرو"
+    },
+
+    "trust": {
+        "category": "trust",
+        "label": "اعتماد"
+    }
+
+}
+
+
+
+def validate_topics(data):
+
+    valid_topics = []
+
+
+    for item in data.get("topics", []):
+
+
+        topic = item.get("topic")
+
+
+        if topic not in ALLOWED_TOPICS:
+
+            continue
+
+
+
+        topic_info = ALLOWED_TOPICS[topic]
+
+
+        item["category"] = topic_info["category"]
+
+        item["label"] = topic_info["label"]
+
+
+
+        if item.get("sentiment") not in [
+            "positive",
+            "negative",
+            "neutral",
+            "mixed"
+        ]:
+
+            continue
+
+
+
+        if item.get("intensity") not in [
+            "low",
+            "medium",
+            "high"
+        ]:
+
+            continue
+
+
+
+        if not item.get("evidence"):
+
+            continue
+
+
+
+        valid_topics.append(item)
+
+
+
+    return {
+
+        "topics": valid_topics
+
+    }
+
+
+
 
 
 def analyze_review_with_gemini(
@@ -50,14 +185,10 @@ Important:
 - Do not treat unrelated parts of the review as evidence.
 - A review can contain both positive and negative feedback.
 - Different topics in the same review must be analyzed independently.
-- If the customer says something positive and then gives a limitation,
-  preserve the nuance.
-- "گران ولی ارزشمند" is NOT simply negative.
-- "خوب بود ولی انتظار زیاد بود" contains separate positive and negative topics.
-- Evidence must be a short exact or near-exact phrase from the review.
-- Do not rewrite evidence into a new claim.
+- Preserve nuance.
+- Evidence must be copied from the review.
+- Do not rewrite evidence.
 - Ignore irrelevant information.
-- Use professional and neutral classification.
 
 Allowed sentiment values:
 
@@ -66,13 +197,15 @@ negative
 neutral
 mixed
 
+
 Allowed intensity values:
 
 low
 medium
 high
 
-Possible topics include, but are NOT limited to:
+
+Possible topics:
 
 quality
 staff_behavior
@@ -81,33 +214,56 @@ waiting_time
 cleanliness
 equipment
 communication
-location
-booking
 support
 delivery
 value
-accuracy
-availability
+booking
+trust
 
-Use a new topic when the review clearly discusses something
-that does not fit the examples above.
+
+Category rules:
+
+Category must represent the broader meaning of the topic.
+
+Examples:
+
+quality -> service_quality
+staff_behavior -> customer_experience
+price -> pricing
+value -> price_perception
+waiting_time -> operations
+cleanliness -> environment
+equipment -> facilities
+communication -> customer_experience
+support -> customer_support
+delivery -> fulfillment
+booking -> booking_experience
+trust -> trust
+
+
+Create a new topic only if it is clearly important
+and cannot fit existing topics.
+
 
 Review:
 
 {review_text}
 
+
 Rating:
 
 {rating}
 
+
 Return ONLY valid JSON.
 
-Return exactly this structure:
+Return exactly this JSON format:
 
 {{
     "topics": [
         {{
             "topic": "",
+            "category": "",
             "label": "",
             "sentiment": "",
             "intensity": "",
@@ -125,6 +281,7 @@ Return exactly this structure:
     ]
 
 
+
     for model in models:
 
         try:
@@ -133,6 +290,7 @@ Return exactly this structure:
                 model=model,
                 contents=prompt
             )
+
 
             text = response.text.strip()
 
@@ -146,31 +304,20 @@ Return exactly this structure:
             ).strip()
 
 
+
             result = json.loads(text)
 
 
+
             if not isinstance(result, dict):
+
                 raise ValueError(
                     "Gemini response is not an object"
                 )
 
 
-            if "topics" not in result:
-                raise ValueError(
-                    "Gemini response does not contain topics"
-                )
+            return validate_topics(result)
 
-
-            if not isinstance(
-                result["topics"],
-                list
-            ):
-                raise ValueError(
-                    "topics must be a list"
-                )
-
-
-            return result
 
 
         except Exception as e:
@@ -180,6 +327,7 @@ Return exactly this structure:
                 model,
                 e
             )
+
 
 
     raise Exception(
