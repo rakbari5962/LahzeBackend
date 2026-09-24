@@ -63,3 +63,5 @@ from app.models.error_occurrence import ErrorOccurrence
 from app.models.error_report import ErrorReport
 
 from app.models.no_show_report import NoShowReport
+
+from app.models.review_ai_job import ReviewAIJob

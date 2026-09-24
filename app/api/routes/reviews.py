@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
 from app.database.dependencies import get_db
-from app.database.database import SessionLocal
 
 from app.schemas.review import (
     ReviewCreate,
     ReviewResponse
+)
+
+from app.repositories.review_ai_job_repository import (
+    create_review_ai_job
 )
 
 from app.repositories.review_repository import (
@@ -15,14 +18,6 @@ from app.repositories.review_repository import (
     get_business_reviews,
     get_user_reviews,
     get_booking_review
-)
-
-from app.services.review_ai_analysis_service import (
-    analyze_business_reviews
-)
-
-from app.services.business_ai_narrative_service import (
-    generate_business_narrative
 )
 
 
@@ -34,41 +29,6 @@ router = APIRouter(
 
 
 
-def run_review_ai_pipeline(
-    business_id: int
-):
-
-    db = SessionLocal()
-
-    try:
-
-        analyze_business_reviews(
-            db=db,
-            business_id=business_id
-        )
-
-
-        generate_business_narrative(
-            db=db,
-            business_id=business_id
-        )
-
-
-    except Exception as e:
-
-        print(
-            "BACKGROUND AI PIPELINE ERROR:",
-            str(e)
-        )
-
-
-    finally:
-
-        db.close()
-
-
-
-
 
 @router.post(
     "/",
@@ -76,7 +36,6 @@ def run_review_ai_pipeline(
 )
 def create_new_review(
     review: ReviewCreate,
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
 
@@ -106,13 +65,15 @@ def create_new_review(
             detail=errors[result["error"]]
         )
 
+    print(
+        "CREATING AI JOB FOR REVIEW:",
+        result.id
+    )
 
-    business_id = result.business_id
-
-
-    background_tasks.add_task(
-        run_review_ai_pipeline,
-        business_id
+    create_review_ai_job(
+        db=db,
+        review_id=result.id,
+        business_id=result.business_id
     )
 
 

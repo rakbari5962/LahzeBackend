@@ -3,20 +3,25 @@ import os
 import json
 
 from dotenv import load_dotenv
-from google import genai
+from openai import OpenAI
 
 
 load_dotenv()
 
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
+client = OpenAI(
+    api_key=os.getenv("JARVIS_API_KEY"),
+    base_url=os.getenv("JARVIS_BASE_URL"),
+    timeout=120
 )
 
 
-MODEL_NAME = "models/gemini-flash-latest"
+MODEL_NAME = os.getenv(
+    "JARVIS_MODEL",
+    "GROK_4_7"
+)
 
-FALLBACK_MODEL = "models/gemini-flash-lite-latest"
+FALLBACK_MODEL = "GROK_4_6"
 
 
 
@@ -97,6 +102,33 @@ def validate_topics(data):
         topic = item.get("topic")
 
 
+        if topic:
+            topic = (
+                topic
+                .strip()
+                .lower()
+                .replace("-", "_")
+                .replace(" ", "_")
+            )
+
+            item["topic"] = topic
+
+
+
+        sentiment = item.get("sentiment")
+
+        if sentiment:
+            item["sentiment"] = sentiment.lower()
+
+
+
+        intensity = item.get("intensity")
+
+        if intensity:
+            item["intensity"] = intensity.lower()
+
+
+
         if topic not in ALLOWED_TOPICS:
 
             continue
@@ -135,8 +167,7 @@ def validate_topics(data):
 
         if not item.get("evidence"):
 
-            continue
-
+            item["evidence"] = ""
 
 
         valid_topics.append(item)
@@ -144,11 +175,8 @@ def validate_topics(data):
 
 
     return {
-
         "topics": valid_topics
-
     }
-
 
 
 
@@ -175,7 +203,16 @@ For each meaningful topic:
 1. Identify the topic.
 2. Determine the sentiment toward that topic.
 3. Determine the intensity of the sentiment.
-4. Extract only the relevant evidence from the review.
+4. Extract evidence.
+
+Evidence is mandatory for every topic.
+
+Rules:
+- Evidence must be an exact quote copied from the review text.
+- Do not summarize or rewrite the evidence.
+- The evidence should directly support the topic and sentiment.
+- Never return an empty evidence field.
+- If a topic has no clear evidence in the review, do not include that topic.
 5. Explain briefly why the evidence supports the classification.
 
 Important:
@@ -189,7 +226,6 @@ Important:
 - Evidence must be copied from the review.
 - Do not rewrite evidence.
 - Ignore irrelevant information.
-
 Allowed sentiment values:
 
 positive
@@ -203,6 +239,38 @@ Allowed intensity values:
 low
 medium
 high
+
+
+Example:
+
+Review:
+"کیفیت خدمات عالی بود، برخورد پرسنل خوب بود ولی زمان انتظار کمی زیاد بود."
+
+Expected topics:
+
+{{
+ "topics": [
+   {{
+     "topic": "quality",
+     "sentiment": "positive",
+     "intensity": "high",
+     "evidence": "کیفیت خدمات عالی بود"
+   }},
+   {{
+     "topic": "staff_behavior",
+     "sentiment": "positive",
+     "intensity": "medium",
+     "evidence": "برخورد پرسنل خوب بود"
+   }},
+   {{
+     "topic": "waiting_time",
+     "sentiment": "negative",
+     "intensity": "medium",
+     "evidence": "زمان انتظار کمی زیاد بود"
+   }}
+ ]
+}}
+
 
 
 Possible topics:
@@ -219,6 +287,25 @@ delivery
 value
 booking
 trust
+
+
+Important:
+- Always use lowercase topic keys exactly as provided above.
+- Do not create new topic keys.
+- Do not return variations, translations, or capitalized versions.
+
+Incorrect examples:
+
+Quality
+Staff_behavior
+Waiting Time
+service_quality
+
+Correct examples:
+
+quality
+staff_behavior
+waiting_time
 
 
 Category rules:
@@ -255,7 +342,9 @@ Rating:
 {rating}
 
 
-Return ONLY valid JSON.
+Return ONLY a JSON object.
+Do not return an array.
+Do not return markdown.
 
 Return exactly this JSON format:
 
@@ -286,13 +375,31 @@ Return exactly this JSON format:
 
         try:
 
-            response = client.models.generate_content(
+            print(
+                "CALLING MODEL:",
+                model,
+                "TEXT:",
+                review_text[:80]
+            )
+
+            response = client.chat.completions.create(
                 model=model,
-                contents=prompt
+                response_format={
+                    "type": "json_object"
+                },
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             )
 
 
-            text = response.text.strip()
+            text = response.choices[0].message.content.strip()
+
+            print("RAW GROK:")
+            print(text)
 
 
             text = text.replace(
@@ -305,11 +412,19 @@ Return exactly this JSON format:
 
 
 
-            result = json.loads(text)
+            try:
+                result = json.loads(text)
 
+            except Exception:
+                print("RAW GEMINI RESPONSE:")
+                print(text)
+                raise
 
 
             if not isinstance(result, dict):
+
+                print("RAW GEMINI RESPONSE:")
+                print(text)
 
                 raise ValueError(
                     "Gemini response is not an object"

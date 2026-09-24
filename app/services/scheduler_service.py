@@ -10,6 +10,11 @@ from app.services.commission_release_service import (
     release_due_commissions
 )
 
+from app.workers.review_ai_worker import (
+    process_pending_review_ai_jobs
+)
+
+
 
 scheduler = BackgroundScheduler()
 
@@ -57,6 +62,33 @@ def run_commission_release():
 
         db.close()
 
+def run_review_ai_worker():
+
+    db = SessionLocal()
+
+    try:
+
+        process_pending_review_ai_jobs(
+            db=db
+        )
+
+
+        print(
+            "Review AI Worker executed"
+        )
+
+
+    except Exception as exc:
+
+        print(
+            f"Review AI Worker failed: {exc}"
+        )
+
+
+    finally:
+
+        db.close()
+
 
 def start_scheduler():
 
@@ -75,5 +107,11 @@ def start_scheduler():
         id="commission_release_job",
         replace_existing=True
     )
-
+    scheduler.add_job(
+        run_review_ai_worker,
+        trigger="interval",
+        minutes=1,
+        id="review_ai_worker_job",
+        replace_existing=True
+    )
     scheduler.start()

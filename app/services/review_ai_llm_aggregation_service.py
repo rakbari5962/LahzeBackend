@@ -1,18 +1,21 @@
 from collections import defaultdict
 
 
-MODEL_VERSION = "llm-aggregation-v1"
+MODEL_VERSION = "llm-aggregation-v2"
+
+
+
+def unique_list(items):
+
+    return list(
+        dict.fromkeys(items)
+    )
 
 
 
 def aggregate_review_ai_results(
     review_results: list
 ):
-    """
-    Aggregate Gemini review analysis results
-    into business-level review intelligence.
-    """
-
 
     topic_stats = defaultdict(
         lambda: {
@@ -23,6 +26,7 @@ def aggregate_review_ai_results(
             "positive_mentions": 0,
             "negative_mentions": 0,
             "neutral_mentions": 0,
+            "mixed_mentions": 0,
             "evidence": []
         }
     )
@@ -31,20 +35,14 @@ def aggregate_review_ai_results(
 
     for result in review_results:
 
-
-        topics = result.get(
+        for item in result.get(
             "topics",
             []
-        )
-
-
-        for item in topics:
-
+        ):
 
             topic = item.get(
                 "topic"
             )
-
 
             if not topic:
                 continue
@@ -52,7 +50,6 @@ def aggregate_review_ai_results(
 
 
             stats = topic_stats[topic]
-
 
             stats["topic"] = topic
 
@@ -63,7 +60,6 @@ def aggregate_review_ai_results(
             stats["label"] = item.get(
                 "label"
             )
-
 
             stats["mentions"] += 1
 
@@ -89,6 +85,11 @@ def aggregate_review_ai_results(
                 stats["neutral_mentions"] += 1
 
 
+            elif sentiment == "mixed":
+
+                stats["mixed_mentions"] += 1
+
+
 
             evidence = item.get(
                 "evidence"
@@ -107,29 +108,47 @@ def aggregate_review_ai_results(
 
     weaknesses = []
 
+    themes = []
+
 
 
     for topic, stats in topic_stats.items():
 
 
-        if (
-            stats["positive_mentions"]
-            >
-            stats["negative_mentions"]
-        ):
+        stats["evidence"] = unique_list(
+            stats["evidence"]
+        )
 
-            strengths.append(
+
+        themes.append(
+            stats
+        )
+
+
+
+        positive = stats["positive_mentions"]
+
+        negative = stats["negative_mentions"]
+
+        mixed = stats["mixed_mentions"]
+
+
+
+        # اگر حتی یک تجربه منفی یا mixed وجود دارد
+        # دیگر strength خالص نیست
+
+        if negative > 0 or mixed > 0:
+
+
+            weaknesses.append(
                 stats
             )
 
 
-        elif (
-            stats["negative_mentions"]
-            >
-            stats["positive_mentions"]
-        ):
+        elif positive > 0:
 
-            weaknesses.append(
+
+            strengths.append(
                 stats
             )
 
@@ -141,9 +160,7 @@ def aggregate_review_ai_results(
 
         "weaknesses": weaknesses,
 
-        "themes": list(
-            topic_stats.values()
-        ),
+        "themes": themes,
 
         "model_version": MODEL_VERSION
 

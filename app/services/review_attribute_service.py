@@ -1,12 +1,18 @@
 from sqlalchemy.orm import Session
 
 
+from app.services.attribute_matching_service import (
+    match_attribute
+)
+
+
 from app.repositories.review_attribute_repository import (
-    get_or_create_attribute,
     get_or_create_business_attribute_score,
     increase_positive_count,
     increase_negative_count
 )
+
+
 
 
 
@@ -22,12 +28,41 @@ def process_review_attributes(
 
     for item in attributes:
 
-
-        attribute = get_or_create_attribute(
-            db=db,
-            key=item["key"],
-            label=item.get("label", item["key"])
+        print(
+            "PROCESS ATTRIBUTE:",
+            item
         )
+
+        print(
+            "MATCH INPUT:",
+            item
+        )
+        
+        attribute = match_attribute(
+            db=db,
+            attribute_key=item.get("key"),
+            attribute_label=item.get("label")
+        )
+        print(
+            "MATCH RESULT:",
+            attribute.key if attribute else None
+        )
+
+
+        # اگر Attribute موجود نبود
+        # فعلاً رد می‌کنیم
+        # مرحله بعد می‌رود Admin Queue
+
+        if not attribute:
+
+            print(
+                "UNKNOWN ATTRIBUTE:",
+                item
+            )
+
+            continue
+
+
 
 
         score = get_or_create_business_attribute_score(
@@ -37,33 +72,41 @@ def process_review_attributes(
         )
 
 
+
         if item["sentiment"] == "positive":
+
 
             increase_positive_count(
                 db=db,
                 score=score
             )
+
 
 
         elif item["sentiment"] == "negative":
 
+
             increase_negative_count(
                 db=db,
                 score=score
             )
 
 
+
         elif item["sentiment"] == "mixed":
+
 
             increase_positive_count(
                 db=db,
                 score=score
             )
 
+
             increase_negative_count(
                 db=db,
                 score=score
             )
+
 
 
         results.append(

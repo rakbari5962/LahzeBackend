@@ -1,15 +1,19 @@
 import time
 
+from app.services.gemini_review_analysis_service import (
+    analyze_review_with_gemini
+)
+
+from app.services.review_ai_llm_aggregation_service import (
+    aggregate_review_ai_results
+)
+
 from app.services.attribute_extraction_service import (
     extract_attributes_from_text
 )
 
 from app.services.review_attribute_service import (
     process_review_attributes
-)
-
-from app.services.attribute_extraction_service import (
-    extract_attributes_from_text
 )
 
 from sqlalchemy.orm import Session
@@ -21,7 +25,7 @@ from app.repositories.review_ai_analysis_repository import (
 )
 
 
-MODEL_VERSION = "rule-based-v7"
+MODEL_VERSION = "llm-v1"
 
 
 TOPIC_KEYWORDS = {
@@ -421,12 +425,18 @@ def analyze_business_reviews(
 
     print("AI ANALYSIS START")
 
+
     reviews = db.query(Review).filter(
         Review.business_id == business_id
     ).all()
 
 
     total_reviews = len(reviews)
+
+
+    # فقط برای تست موقت LLM
+    # بعد از اطمینان حذف می‌شود
+    test_reviews = reviews[:5]
 
 
     if total_reviews == 0:
@@ -456,10 +466,6 @@ def analyze_business_reviews(
         }
 
 
-        start_time = time.time()
-
-        print("AI ANALYSIS START")
-
         return create_or_update_analysis(
             db,
             business_id,
@@ -473,215 +479,100 @@ def analyze_business_reviews(
     ) / total_reviews
 
 
+
+    llm_results = []
+
     positive_count = 0
     neutral_count = 0
     negative_count = 0
 
 
-    topic_stats = {}
 
+    for review in test_reviews:
 
-    for topic in TOPIC_KEYWORDS:
-
-        topic_stats[topic] = {
-
-            "mentions": 0,
-
-            "positive": 0,
-
-            "negative": 0,
-
-            "positive_evidence": [],
-
-            "negative_evidence": []
-
-        }
-
-
-    for review in reviews:
 
         if review.rating >= 4:
 
             positive_count += 1
 
+
         elif review.rating == 3:
 
             neutral_count += 1
+
 
         else:
 
             negative_count += 1
 
 
+
         comment = review.comment or ""
 
 
         if not comment.strip():
+
             continue
 
 
-        sentences = split_into_sentences(
-            comment
+
+        result = analyze_review_with_gemini(
+            comment,
+            review.rating
         )
 
 
-        for sentence in sentences:
+        llm_results.append(result)
 
-            for topic in TOPIC_KEYWORDS:
+        review_attribute_list = []
 
-                sentiment = detect_topic_sentiment(
-                    sentence,
-                    topic
-                )
 
+        for item in result.get("topics", []):
 
-                if sentiment is None:
-                    continue
+            review_attribute_list.append(
+                {
+                    "key": item.get("topic"),
+                    "label": item.get("label"),
+                    "sentiment": item.get("sentiment")
+                }
+            )
 
 
-                if not is_valid_evidence(
-                    sentence,
-                    topic,
-                    sentiment
-                ):
-                    continue
+        if review_attribute_list:
 
+            process_review_attributes(
+                db=db,
+                business_id=business_id,
+                attributes=review_attribute_list
+            )
 
-                topic_stats[topic]["mentions"] += 1
 
 
-                if sentiment == "positive":
+    print("LLM RESULTS COUNT:", len(llm_results))
 
-                    topic_stats[topic]["positive"] += 1
+    print("LLM RESULTS:")
+    for r in llm_results:
+        print(r)
 
 
-                    if (
-                        sentence
-                        not in topic_stats[topic]["positive_evidence"]
-                    ):
+    aggregated = aggregate_review_ai_results(
+        llm_results
+    )
 
-                        topic_stats[topic][
-                            "positive_evidence"
-                        ].append(
-                            sentence
-                        )
 
+    strengths = aggregated["strengths"]
 
-                elif sentiment == "negative":
+    weaknesses = aggregated["weaknesses"]
 
-                    topic_stats[topic]["negative"] += 1
+    themes = aggregated["themes"]
+    
+    print(
+        "THEMES RESULT:",
+        themes
+    )
 
+    topic_sentiment = themes
 
-                    if (
-                        sentence
-                        not in topic_stats[topic]["negative_evidence"]
-                    ):
-
-                        topic_stats[topic][
-                            "negative_evidence"
-                        ].append(
-                            sentence
-                        )
-
-
-    strengths = []
-    weaknesses = []
-    mixed_topics = []
-    themes = []
-    topic_sentiment = []
-
-
-    for topic, stats in topic_stats.items():
-
-        if stats["mentions"] == 0:
-            continue
-
-
-        label = TOPIC_LABELS[topic]
-
-
-        if stats["positive"] > 0 and stats["negative"] > 0:
-
-            sentiment = "mixed"
-
-
-        elif stats["positive"] > stats["negative"]:
-
-            sentiment = "positive"
-
-
-        elif stats["negative"] > stats["positive"]:
-
-            sentiment = "negative"
-
-
-        else:
-
-            sentiment = "neutral"
-
-
-        topic_sentiment.append({
-
-            "topic": topic,
-
-            "label": label,
-
-            "sentiment": sentiment,
-
-            "mentions": stats["mentions"]
-
-        })
-
-
-        themes.append({
-
-            "name": topic,
-
-            "label": label,
-
-            "mentions": stats["mentions"]
-
-        })
-
-
-        if stats["positive"] > 0:
-
-            strengths.append({
-
-                "name": topic,
-
-                "label": label,
-
-                "mentions": stats["mentions"],
-
-                "positive_mentions": stats["positive"],
-
-                "negative_mentions": stats["negative"],
-
-                "evidence": stats["positive_evidence"]
-
-            })
-
-
-
-        if stats["negative"] > 0:
-
-            weaknesses.append({
-
-                "name": topic,
-
-                "label": label,
-
-                "mentions": stats["mentions"],
-
-                "positive_mentions": stats["positive"],
-
-                "negative_mentions": stats["negative"],
-
-                "evidence": stats["negative_evidence"]
-
-            })
-            
 
 
     customer_sentiment = {
@@ -702,6 +593,7 @@ def analyze_business_reviews(
         )
 
     }
+
 
 
     data = {
@@ -729,50 +621,6 @@ def analyze_business_reviews(
 
     }
 
-    attribute_list = []
-
-
-    for topic, stats in topic_stats.items():
-
-        for _ in range(stats["positive"]):
-
-            attribute_list.append({
-
-                "key": topic,
-
-                "label": TOPIC_LABELS[topic],
-
-                "sentiment": "positive"
-
-            })
-
-
-        for _ in range(stats["negative"]):
-
-            attribute_list.append({
-
-                "key": topic,
-
-                "label": TOPIC_LABELS[topic],
-
-                "sentiment": "negative"
-
-            })
-
-
-
-    if attribute_list:
-
-        process_review_attributes(
-
-            db=db,
-
-            business_id=business_id,
-
-            attributes=attribute_list
-
-        )
-
 
 
     print(
@@ -782,18 +630,9 @@ def analyze_business_reviews(
     )
 
 
-    return {
 
-        "strengths": strengths,
-
-        "weaknesses": weaknesses,
-
-        "themes": themes,
-
-        "topic_sentiment": topic_sentiment,
-
-        "customer_sentiment": customer_sentiment,
-
-        "model_version": MODEL_VERSION
-
-    }
+    return create_or_update_analysis(
+        db,
+        business_id,
+        data
+    )
