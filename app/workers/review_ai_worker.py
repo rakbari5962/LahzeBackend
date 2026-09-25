@@ -17,6 +17,16 @@ from app.repositories.review_ai_result_repository import (
     save_review_ai_result
 )
 
+from app.services.review_ai_result_aggregation_service import (
+    get_main_negative_topic
+)
+
+from app.repositories.review_ai_analysis_repository import (
+    update_main_business_issue
+)
+
+
+
 
 def process_pending_review_ai_jobs(
     db: Session
@@ -76,6 +86,22 @@ def process_pending_review_ai_jobs(
                 business_id=review.business_id,
                 result=result
             )
+
+            issue = get_main_negative_topic(
+                db=db,
+                business_id=review.business_id
+            )
+
+
+            if issue:
+
+                update_main_business_issue(
+                    db=db,
+                    business_id=review.business_id,
+                    issue=issue
+                )
+
+            
 
             topics = result.get(
                 "topics",

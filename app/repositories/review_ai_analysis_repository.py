@@ -100,6 +100,79 @@ def create_or_update_analysis(
 
 
 
+def update_main_business_issue(
+    db: Session,
+    business_id: int,
+    issue: dict
+):
+
+    analysis = get_business_analysis(
+        db,
+        business_id
+    )
+
+
+    weakness_data = [
+        {
+            "topic": issue.get("topic"),
+            "total_mentions": issue.get("total_mentions"),
+            "negative_mentions": issue.get("negative_mentions"),
+            "negative_percentage": issue.get("negative_percentage"),
+            "summary": (
+                f"{issue.get('negative_mentions')} مورد از "
+                f"{issue.get('total_mentions')} تجربه مشتریان درباره "
+                f"{issue.get('topic')} بازخورد منفی داشته‌اند "
+                f"({issue.get('negative_percentage')}٪)."
+            )
+        }
+    ]
+
+
+
+    if analysis:
+
+        analysis.weaknesses = weakness_data
+
+        analysis.model_version = (
+            "aggregation-v1"
+        )
+
+
+    else:
+
+        analysis = ReviewAIAnalysis(
+
+            business_id=business_id,
+
+            total_reviews=0,
+
+            average_rating=None,
+
+            strengths=[],
+
+            weaknesses=weakness_data,
+
+            themes=[],
+
+            topic_sentiment=[],
+
+            customer_sentiment={},
+
+            model_version="aggregation-v1"
+
+        )
+
+        db.add(analysis)
+
+
+
+    db.commit()
+
+    db.refresh(analysis)
+
+
+    return analysis
+
 
 
 
