@@ -21,7 +21,8 @@ def get_main_negative_topic(
     topics = defaultdict(
         lambda: {
             "mentions": 0,
-            "negative_mentions": 0
+            "negative_mentions": 0,
+            "label": None
         }
     )
 
@@ -33,7 +34,15 @@ def get_main_negative_topic(
             key = topic.get(
                 "topic"
             )
+            
+            if not key:
+                continue
 
+
+            if not topics[key]["label"]:
+                topics[key]["label"] = topic.get(
+                    "label"
+                )
 
             if not key:
                 continue
@@ -75,6 +84,7 @@ def get_main_negative_topic(
                 negative_topics.append(
                     {
                         "topic": key,
+                        "label": value["label"],
                         "total_mentions": value["mentions"],
                         "negative_mentions": value["negative_mentions"],
                         "negative_percentage": negative_percentage

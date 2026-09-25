@@ -79,6 +79,19 @@ def process_pending_review_ai_jobs(
                 review.comment,
                 review.rating
             )
+            topic_labels = {
+                "waiting_time": "زمان انتظار",
+                "quality": "کیفیت خدمات",
+                "staff_behavior": "برخورد پرسنل"
+            }
+
+
+            for topic in result.get("topics", []):
+
+                topic["label"] = topic_labels.get(
+                    topic.get("topic"),
+                    topic.get("topic")
+                )
 
             save_review_ai_result(
                 db=db,
@@ -92,6 +105,10 @@ def process_pending_review_ai_jobs(
                 business_id=review.business_id
             )
 
+            print(
+                "MAIN ISSUE FROM AGGREGATOR:",
+                issue
+            )
 
             if issue:
 

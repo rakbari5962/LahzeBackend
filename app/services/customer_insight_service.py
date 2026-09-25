@@ -20,11 +20,11 @@ def get_customer_insights(
     )
 
 
-    strengths = []
-    improvements = []
+    attributes = []
 
 
     for score, attribute in rows:
+
 
         total_mentions = (
             score.positive_count +
@@ -36,15 +36,29 @@ def get_customer_insights(
             continue
 
 
-        total = total_mentions
 
-
-        calculated_score = round(
-            (score.positive_count / total) * 100
+        positive_percentage = round(
+            (
+                score.positive_count
+                /
+                total_mentions
+            )
+            * 100
         )
 
 
-        item = {
+        negative_percentage = round(
+            (
+                score.negative_count
+                /
+                total_mentions
+            )
+            * 100
+        )
+
+
+
+        attributes.append({
 
             "attribute_id": attribute.id,
 
@@ -52,38 +66,25 @@ def get_customer_insights(
 
             "label": attribute.label,
 
-            "score": calculated_score,
+            "total_mentions": total_mentions,
 
             "positive_mentions": score.positive_count,
 
             "negative_mentions": score.negative_count,
 
-            "total_mentions": total_mentions
+            "positive_percentage": positive_percentage,
 
-            }
+            "negative_percentage": negative_percentage
 
-
-        if calculated_score >= 80:
-
-            strengths.append(item)
-
-
-        elif calculated_score <= 50:
-
-            improvements.append(item)
+        })
 
 
 
-    strengths.sort(
+    attributes.sort(
         key=lambda x: x["total_mentions"],
         reverse=True
     )
 
-
-    improvements.sort(
-        key=lambda x: x["total_mentions"],
-        reverse=True
-    )
 
 
     return {
@@ -92,12 +93,10 @@ def get_customer_insights(
 
         "summary": {
 
-            "total_attributes": len(rows)
+            "total_attributes": len(attributes)
 
         },
 
-        "strengths": strengths[:TOP_LIMIT],
-
-        "improvements": improvements[:TOP_LIMIT]
+        "attributes": attributes[:TOP_LIMIT]
 
     }

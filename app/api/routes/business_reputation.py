@@ -8,8 +8,8 @@ from app.schemas.review_ai_analysis import (
     ReviewAIAnalysisResponse
 )
 
-from app.services.business_reputation_service import (
-    get_business_reputation
+from app.services.business_insight_service import (
+    get_business_insight
 )
 
 
@@ -30,7 +30,7 @@ def business_review_summary(
     db: Session = Depends(get_db)
 ):
 
-    result = get_business_reputation(
+    result = get_business_insight(
         db=db,
         business_id=business_id
     )

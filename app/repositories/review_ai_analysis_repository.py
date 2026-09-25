@@ -115,13 +115,14 @@ def update_main_business_issue(
     weakness_data = [
         {
             "topic": issue.get("topic"),
+            "label": issue.get("label"),
             "total_mentions": issue.get("total_mentions"),
             "negative_mentions": issue.get("negative_mentions"),
             "negative_percentage": issue.get("negative_percentage"),
             "summary": (
                 f"{issue.get('negative_mentions')} مورد از "
                 f"{issue.get('total_mentions')} تجربه مشتریان درباره "
-                f"{issue.get('topic')} بازخورد منفی داشته‌اند "
+                f"{issue.get('label')} بازخورد منفی داشته‌اند "
                 f"({issue.get('negative_percentage')}٪)."
             )
         }
