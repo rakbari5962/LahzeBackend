@@ -8,6 +8,8 @@ from sqlalchemy import (
     Boolean
 )
 
+from sqlalchemy.orm import relationship
+
 from sqlalchemy.sql import func
 
 from app.database.database import Base
@@ -38,6 +40,10 @@ class Business(Base):
     )
 
 
+    owner = relationship(
+        "User",
+        back_populates="businesses"
+    )
 
     name = Column(
         String,
@@ -123,7 +129,9 @@ class Business(Base):
         nullable=False
     )
 
-
+    owner = relationship(
+        "User"
+    )
 
     created_at = Column(
         DateTime(timezone=True),

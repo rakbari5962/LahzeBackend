@@ -143,6 +143,18 @@ class User(Base):
 
     )
 
+    businesses = relationship(
+        "Business",
+        back_populates="owner"
+    )
+    
+
+    businesses = relationship(
+        "Business",
+        back_populates="owner"
+    )
+
+
 
     created_at = Column(
 
