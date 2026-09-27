@@ -46,6 +46,11 @@ class User(Base):
 
     )
 
+    secondary_phone = Column(
+        String,
+        nullable=True
+    )
+
     first_name = Column(
     String,
     nullable=True
@@ -81,13 +86,25 @@ class User(Base):
         nullable=True
     )
 
+    job_title = Column(
+        String,
+        nullable=True
+    )
 
     email = Column(
         String,
         nullable=True
     )
 
+    national_id = Column(
+        String,
+        nullable=True
+    )
 
+    bio = Column(
+        String,
+        nullable=True
+    )
 
     province_id = Column(
 

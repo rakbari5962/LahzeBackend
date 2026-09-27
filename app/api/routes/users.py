@@ -239,7 +239,8 @@ def update_current_user_profile(
         )
 
 
-
+    print("PROFILE DATA RECEIVED:", profile_data)
+    
     updated_user = update_user_profile(
 
         db=db,

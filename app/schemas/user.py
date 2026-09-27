@@ -46,7 +46,15 @@ class UserOpportunityProfileUpdate(BaseModel):
 
     iban: str
 
+    secondary_phone: str | None = None
+
+    national_id: str | None = None
+
     education: str | None = None
+
+    job_title: str | None = None
+
+    bio: str | None = None
 
     email: str | None = None
 
@@ -83,6 +91,8 @@ class UserResponse(BaseModel):
 
     phone_number: str
 
+    secondary_phone: str | None = None
+
     role: str
 
     province_id: int | None = None
@@ -91,6 +101,9 @@ class UserResponse(BaseModel):
 
     city_name: str | None = None
 
+    national_id: str | None = None
+
+    bio: str | None = None
 
     first_name: str | None = None
 
@@ -103,6 +116,8 @@ class UserResponse(BaseModel):
     iban: str | None = None
 
     education: str | None = None
+
+    job_title: str | None = None
 
     email: str | None = None
 

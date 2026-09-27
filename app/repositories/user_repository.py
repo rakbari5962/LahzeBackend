@@ -96,6 +96,12 @@ def get_user(
 
     user.city_name = city_name
 
+    print(
+        "GET USER DATA:",
+        user.secondary_phone,
+        user.national_id,
+        user.bio
+    )
 
     return user
 
@@ -171,6 +177,19 @@ def update_user_profile(
 
     user.first_name = profile_data.first_name
 
+    user.secondary_phone = profile_data.secondary_phone
+
+    user.national_id = profile_data.national_id
+    
+    user.bio = profile_data.bio
+
+    print(
+        "BEFORE COMMIT:",
+        user.secondary_phone,
+        user.national_id,
+        user.bio
+    )
+
     user.last_name = profile_data.last_name
 
     user.gender = profile_data.gender
@@ -180,6 +199,8 @@ def update_user_profile(
     user.iban = profile_data.iban
 
     user.education = profile_data.education
+
+    user.job_title = profile_data.job_title
 
     user.email = profile_data.email
 
