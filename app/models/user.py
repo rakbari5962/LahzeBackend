@@ -48,7 +48,8 @@ class User(Base):
 
     secondary_phone = Column(
         String,
-        nullable=True
+        nullable=True,
+        index=True
     )
 
     first_name = Column(

@@ -42,9 +42,9 @@ class UserOpportunityProfileUpdate(BaseModel):
 
     gender: str
 
-    birth_date: date
+    birth_date: date | None = None
 
-    iban: str
+    iban: str | None = None
 
     secondary_phone: str | None = None
 
@@ -64,14 +64,16 @@ class UserOpportunityProfileUpdate(BaseModel):
     @classmethod
     def validate_iban(
         cls,
-        value: str
+        value: str | None
     ):
+
+        if value is None or value == "":
+            return value
 
         if not re.match(
             r"^IR\d{24}$",
             value
         ):
-
             raise ValueError(
                 "شماره شبا باید با IR شروع شود و شامل 24 رقم باشد"
             )

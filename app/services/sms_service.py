@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("SMS SERVICE LOADED")
+print("SMS KEY:", os.getenv("SMS_IR_API_KEY"))
+print("SMS TEMPLATE:", os.getenv("SMS_IR_TEMPLATE_ID"))
+
 
 SMS_IR_VERIFY_URL = "https://api.sms.ir/v1/send/verify"
 
@@ -25,6 +29,11 @@ def send_verification_code(
         "SMS_IR_TEMPLATE_ID"
     )
 
+    print("SEND SMS START")
+    print("MOBILE:", mobile)
+    print("CODE:", code)
+    print("API KEY EXISTS:", bool(api_key))
+    print("TEMPLATE:", template_id)
 
     # Development mode
 
@@ -76,6 +85,7 @@ def send_verification_code(
 
     }
 
+    print("CALLING SMS.IR")
 
     response = requests.post(
 
@@ -87,6 +97,7 @@ def send_verification_code(
 
     )
 
+    print("SMS RESPONSE RECEIVED")
 
     print(
         "OTP SMS STATUS:",

@@ -286,11 +286,16 @@ def verify_otp(
 
         .filter(
 
-            User.phone_number == phone_number
+            (User.phone_number == phone_number)
+
+            |
+
+            (User.secondary_phone == phone_number)
 
         )
 
         .first()
+
 
     )
 
@@ -301,22 +306,44 @@ def verify_otp(
     if not user:
 
 
-        user = User(
+        existing_secondary = (
 
-            phone_number=phone_number,
+            db.query(User)
 
-            role="CUSTOMER",
+            .filter(
 
-            profile_completed=False
+                User.secondary_phone == phone_number
+
+            )
+
+            .first()
 
         )
 
 
-        db.add(user)
+        if existing_secondary:
 
-        db.commit()
+            user = existing_secondary
 
-        db.refresh(user)
+
+        else:
+
+            user = User(
+
+                phone_number=phone_number,
+
+                role="CUSTOMER",
+
+                profile_completed=False
+
+            )
+
+
+            db.add(user)
+
+            db.commit()
+
+            db.refresh(user)
 
 
 

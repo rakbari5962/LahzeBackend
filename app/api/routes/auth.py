@@ -62,22 +62,30 @@ def request_otp_code(
 
 ):
 
-    request_otp(
-
-        db=db,
-
-        phone_number=phone_number
-
-    )
+    print("REQUEST OTP ROUTE HIT:", phone_number)
 
 
-    return {
+    try:
 
-        "success": True,
+        result = request_otp(
+            db=db,
+            phone_number=phone_number
+        )
 
-        "message": "OTP sent"
+        print("REQUEST OTP RESULT:", result)
 
-    }
+
+        return {
+            "success": True,
+            "message": "OTP sent"
+        }
+
+
+    except Exception as e:
+
+        print("REQUEST OTP ERROR:", repr(e))
+
+        raise
 
 
 
