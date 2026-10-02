@@ -80,47 +80,43 @@ def create_new_user(
 
 
 @router.get(
-
     "/me",
-
     response_model=UserResponse
-
 )
 def read_current_user(
-
     token: str,
-
     db: Session = Depends(get_db)
-
 ):
 
-
     session = get_login_session(
-
         db=db,
-
         token=token
-
     )
-
 
     if not session:
-
         raise Exception(
-
             "User not logged in"
-
         )
 
-
-
-    return get_user(
-
+    user = get_user(
         db,
-
         session.user_id
-
     )
+
+    print(
+    "API RESPONSE BEFORE SCHEMA:",
+    {
+        "email": user.email,
+        "education": user.education,
+        "job_title": user.job_title,
+        "bio": user.bio,
+        "national_id": user.national_id,
+        "province_name": user.province_name,
+        "city_name": user.city_name,
+        }
+    )
+
+    return user
 
 
 

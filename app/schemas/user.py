@@ -103,6 +103,8 @@ class UserResponse(BaseModel):
 
     city_name: str | None = None
 
+    province_name: str | None = None
+
     national_id: str | None = None
 
     bio: str | None = None

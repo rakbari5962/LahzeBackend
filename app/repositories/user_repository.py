@@ -1,4 +1,5 @@
 from app.services.wallet_service import create_user_wallet
+from app.models.province import Province
 
 from sqlalchemy.orm import Session
 
@@ -57,50 +58,45 @@ def get_user(
 ):
 
     result = (
-
         db.query(
-
             User,
-
+            Province.name.label("province_name"),
             City.name.label("city_name")
-
         )
-
         .outerjoin(
-
+            Province,
+            User.province_id == Province.id
+        )
+        .outerjoin(
             City,
-
             User.city_id == City.id
-
         )
-
         .filter(
-
             User.id == user_id
-
         )
-
         .first()
-
     )
 
-
     if not result:
-
         return None
 
+    user, province_name, city_name = result
 
-
-    user, city_name = result
-
-
+    # Response-only attributes
+    user.province_name = province_name
     user.city_name = city_name
 
     print(
-        "GET USER DATA:",
-        user.secondary_phone,
-        user.national_id,
-        user.bio
+        "RETURN USER CHECK:",
+        {
+            "email": user.email,
+            "education": user.education,
+            "job_title": user.job_title,
+            "bio": user.bio,
+            "national_id": user.national_id,
+            "province_name": user.province_name,
+            "city_name": user.city_name,
+        }
     )
 
     return user
@@ -147,7 +143,10 @@ def update_user_city(
     db.refresh(user)
 
 
-    return user
+    return get_user(
+        db,
+        user_id
+    )
 
 
 
