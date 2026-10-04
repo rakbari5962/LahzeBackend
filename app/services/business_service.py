@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 
 
 from app.repositories.business_repository import (
-    create_business as create_business_repository
+    create_business as create_business_repository,
+    get_businesses_by_owner as get_businesses_by_owner_repository
 )
 
 
@@ -37,6 +38,24 @@ from app.schemas.business_service import (
 
 
 
+
+
+def get_businesses_by_owner(
+
+    db: Session,
+
+    owner_user_id: int
+
+):
+
+
+    return get_businesses_by_owner_repository(
+
+        db=db,
+
+        owner_user_id=owner_user_id
+
+    )
 
 
 def create_founder_inviter_attribution(

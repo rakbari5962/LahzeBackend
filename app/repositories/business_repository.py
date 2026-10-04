@@ -58,6 +58,22 @@ def create_business(
 
 
 
+def get_businesses_by_owner(
+
+    db: Session,
+
+    owner_user_id: int
+
+):
+
+
+    return db.query(Business).filter(
+
+        Business.owner_user_id == owner_user_id
+
+    ).all()
+
+
 def get_business(
 
     db: Session,

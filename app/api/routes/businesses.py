@@ -30,7 +30,8 @@ from app.repositories.business_repository import (
 
 
 from app.services.business_service import (
-    create_business
+    create_business,
+    get_businesses_by_owner
 )
 
 
@@ -55,6 +56,49 @@ router = APIRouter(
 
 
 
+
+
+@router.get(
+
+    "/",
+
+    response_model=list[BusinessResponse]
+
+)
+def read_my_businesses(
+
+    token: str = Query(...),
+
+    db: Session = Depends(get_db)
+
+):
+
+
+    session = get_login_session(
+
+        db=db,
+
+        token=token
+
+    )
+
+
+    if not session:
+
+        raise Exception(
+
+            "User not logged in"
+
+        )
+
+
+    return get_businesses_by_owner(
+
+        db=db,
+
+        owner_user_id=session.user_id
+
+    )
 
 
 @router.post(
