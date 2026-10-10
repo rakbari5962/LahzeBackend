@@ -152,23 +152,11 @@ def release_booking_hold(
 
 def capture_booking_hold(
     db: Session,
-    booking_id: int
+    booking_id: int,
+    commit: bool = True,
 ):
-    """
-    وقتی سالن تایید کرد:
-
-    Hold:
-    ACTIVE
-
-    تبدیل می‌شود به:
-
-    CAPTURED
-
-    سپس Payment انجام می‌شود
-    """
-
-
     return capture_hold(
         db,
-        booking_id
+        booking_id,
+        commit=commit,
     )

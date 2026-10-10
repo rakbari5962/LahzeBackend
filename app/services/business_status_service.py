@@ -37,6 +37,9 @@ def update_business_status(
 
         )
 
+    if business.is_deleted:
+        return business
+
 
 
     if completion_percentage < 50:

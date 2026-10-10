@@ -12,7 +12,8 @@ def create_category_ai_history(
     suggested_category_id: int,
     action: str,
     confidence: int,
-    input_snapshot: dict | None = None
+    input_snapshot: dict | None = None,
+    commit: bool = True
 ):
 
 
@@ -35,9 +36,15 @@ def create_category_ai_history(
 
     db.add(history)
 
-    db.commit()
+    if commit:
 
-    db.refresh(history)
+        db.commit()
+
+        db.refresh(history)
+
+    else:
+
+        db.flush()
 
 
     return history

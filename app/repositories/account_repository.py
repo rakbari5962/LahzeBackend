@@ -1,3 +1,5 @@
+from sqlalchemy.exc import IntegrityError
+
 from sqlalchemy.orm import Session
 
 from app.models.account import Account
@@ -9,49 +11,58 @@ def create_account(
     owner_type: str,
     owner_id: int,
     account_type: str,
-    currency: str = "IRR"
+    currency: str = "IRR",
+    commit: bool = True,
 ):
-
-    existing_account = db.query(Account).filter(
+    identity_filters = (
         Account.owner_type == owner_type,
         Account.owner_id == owner_id,
-        Account.account_type == account_type
-    ).first()
+        Account.account_type == account_type,
+    )
 
+    existing_account = db.query(Account).filter(
+        *identity_filters
+    ).first()
 
     if existing_account:
         return existing_account
 
-
-
     account = Account(
-
         owner_type=owner_type,
-
         owner_id=owner_id,
-
         account_type=account_type,
-
         balance=0,
-
         currency=currency,
-
-        status="ACTIVE"
-
+        status="ACTIVE",
     )
 
+    # Flush pending state before opening the savepoint, so unrelated
+    # integrity errors are not mistaken for account identity conflicts.
+    db.flush()
 
-    db.add(account)
+    try:
+        # The savepoint allows a uniqueness conflict to be handled without
+        # unnecessarily invalidating the caller's outer transaction.
+        with db.begin_nested():
+            db.add(account)
+            db.flush()
+    except IntegrityError:
+        existing_account = db.query(Account).filter(
+            *identity_filters
+        ).first()
 
-    db.commit()
+        if existing_account is not None:
+            if commit:
+                db.commit()
+            return existing_account
 
-    db.refresh(account)
+        raise
 
+    if commit:
+        db.commit()
+        db.refresh(account)
 
     return account
-
-
-
 
 
 def get_account(

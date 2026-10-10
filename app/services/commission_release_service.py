@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.reward_event import RewardEvent
@@ -23,7 +24,6 @@ from app.repositories.ledger_repository import (
 from app.services.financial_transaction_service import (
     create_financial_transaction,
     complete_financial_transaction,
-    fail_financial_transaction,
     get_financial_transaction
 )
 
@@ -98,6 +98,13 @@ def release_commission(
         )
     )
 
+    # ???? ????????? ?? ???? SQLite? ???? ??? datetime ??
+    # ???? timezone ?????????. ???????? ????????? ?? UTC ??? ???????.
+    if release_time.tzinfo is None:
+        release_time = release_time.replace(tzinfo=timezone.utc)
+    else:
+        release_time = release_time.astimezone(timezone.utc)
+
     now = datetime.now(timezone.utc)
 
     if now < release_time:
@@ -115,43 +122,26 @@ def release_commission(
 
 
     # --------------------------------------------------
-    # 6. حساب خزانه پلتفرم
+    # 6. Lock the pending reward event before financial side effects.
     # --------------------------------------------------
 
-    treasury_account = create_platform_treasury_account(
-        db
-    )
+    locked_reward_event = db.query(
+        RewardEvent
+    ).filter(
+        RewardEvent.id == reward_event_id,
+        RewardEvent.type == "REFERRAL_COMMISSION",
+        RewardEvent.status == "PENDING"
+    ).with_for_update().first()
 
-    if not treasury_account:
+    if not locked_reward_event:
+        db.rollback()
         return None
 
-
-    # --------------------------------------------------
-    # 7. کیف پول معرف
-    # --------------------------------------------------
-
-    user_wallet = create_user_wallet_account(
-        db,
-        reward_event.user_id
-    )
-
-    if not user_wallet:
-        return None
-
-
-    # --------------------------------------------------
-    # 8. transaction_id ثابت و یکتا
-    # برای هر RewardEvent فقط یک Release داریم
-    # --------------------------------------------------
+    reward_event = locked_reward_event
 
     transaction_id = (
         f"COMMISSION-RELEASE-{reward_event.id}"
     )
-
-
-    # --------------------------------------------------
-    # 9. جلوگیری از پرداخت دوباره
-    # --------------------------------------------------
 
     existing_transaction = get_financial_transaction(
         db,
@@ -159,82 +149,109 @@ def release_commission(
     )
 
     if existing_transaction:
-
-        # اگر قبلاً تراکنشی برای این کمیسیون ساخته شده باشد،
-        # دوباره هیچ پولی جابه‌جا نمی‌کنیم.
-        if existing_transaction.status in (
-            "PENDING",
-            "COMPLETED",
-            "FAILED",
-            "CANCELLED"
-        ):
-            return None
-
-
-    # --------------------------------------------------
-    # 10. ساخت FinancialTransaction
-    # --------------------------------------------------
-
-    financial_transaction = create_financial_transaction(
-        db=db,
-        transaction_id=transaction_id,
-        transaction_type="COMMISSION_RELEASE",
-        amount=amount,
-        reference_type="REWARD_EVENT",
-        reference_id=reward_event.id
-    )
-
-    if not financial_transaction:
+        db.rollback()
         return None
 
 
-    try:
+    # --------------------------------------------------
+    # 7. حساب خزانه پلتفرم
+    # --------------------------------------------------
 
-        # --------------------------------------------------
-        # 11. کم کردن کمیسیون از خزانه Lahze
-        # --------------------------------------------------
+    try:
+        treasury_account = create_platform_treasury_account(
+            db,
+            commit=False,
+        )
+    except IntegrityError:
+        db.rollback()
+        return None
+
+    if not treasury_account:
+        db.rollback()
+        return None
+
+
+    # --------------------------------------------------
+    # 8. کیف پول معرف
+    # --------------------------------------------------
+
+    try:
+        user_wallet = create_user_wallet_account(
+            db,
+            reward_event.user_id,
+            commit=False,
+        )
+    except IntegrityError:
+        db.rollback()
+        return None
+
+    if not user_wallet:
+        db.rollback()
+        return None
+
+
+    # --------------------------------------------------
+    # 9. ساخت FinancialTransaction
+    # --------------------------------------------------
+
+    try:
+        # ??? ??????? ???? ?? ????? ?????? ?? ?? ?????? ???? ????????.
+        try:
+            financial_transaction = create_financial_transaction(
+                db=db,
+                transaction_id=transaction_id,
+                transaction_type="COMMISSION_RELEASE",
+                amount=amount,
+                reference_type="REWARD_EVENT",
+                reference_id=reward_event.id,
+                commit=False,
+                fail_if_exists=True,
+            )
+        except IntegrityError:
+            # A concurrent request may have inserted this unique ID.
+            db.rollback()
+            return None
+
+        if not financial_transaction:
+            db.rollback()
+            return None
+
+        # Guard against reusing an existing transaction.
+        # Only a matching PENDING transaction may proceed.
+        if (
+            financial_transaction.transaction_id != transaction_id
+            or financial_transaction.type != "COMMISSION_RELEASE"
+            or financial_transaction.status != "PENDING"
+            or financial_transaction.total_amount != amount
+            or financial_transaction.reference_type != "REWARD_EVENT"
+            or financial_transaction.reference_id != reward_event.id
+        ):
+            db.rollback()
+            return None
 
         treasury_result = decrease_account_balance(
             db,
             treasury_account.id,
-            amount
+            amount,
+            commit=False,
         )
 
         if not treasury_result:
-
-            fail_financial_transaction(
-                db,
-                transaction_id
-            )
-
+            db.rollback()
             return None
-
-
-        # --------------------------------------------------
-        # 12. اضافه کردن کمیسیون به کیف پول معرف
-        # --------------------------------------------------
 
         wallet_result = increase_account_balance(
             db,
             user_wallet.id,
-            amount
+            amount,
+            commit=False,
         )
 
         if not wallet_result:
-
-            fail_financial_transaction(
-                db,
-                transaction_id
-            )
-
+            db.rollback()
             return None
 
-
-        # --------------------------------------------------
-        # 13. Ledger خزانه پلتفرم
-        # --------------------------------------------------
-
-        create_ledger_entry(
+        debit_entry = create_ledger_entry(
             db=db,
             account_id=treasury_account.id,
             transaction_id=transaction_id,
@@ -242,15 +259,15 @@ def release_commission(
             direction="DEBIT",
             amount=amount,
             reference_type="REWARD_EVENT",
-            reference_id=reward_event.id
+            reference_id=reward_event.id,
+            commit=False,
         )
 
+        if not debit_entry:
+            db.rollback()
+            return None
 
-        # --------------------------------------------------
-        # 14. Ledger کیف پول معرف
-        # --------------------------------------------------
-
-        create_ledger_entry(
+        credit_entry = create_ledger_entry(
             db=db,
             account_id=user_wallet.id,
             transaction_id=transaction_id,
@@ -258,40 +275,35 @@ def release_commission(
             direction="CREDIT",
             amount=amount,
             reference_type="REWARD_EVENT",
-            reference_id=reward_event.id
+            reference_id=reward_event.id,
+            commit=False,
         )
 
+        if not credit_entry:
+            db.rollback()
+            return None
 
-        # --------------------------------------------------
-        # 15. تکمیل FinancialTransaction
-        # --------------------------------------------------
-
-        complete_financial_transaction(
+        completed_transaction = complete_financial_transaction(
             db,
-            transaction_id
+            transaction_id,
+            commit=False,
         )
 
-
-        # --------------------------------------------------
-        # 16. تکمیل RewardEvent
-        # --------------------------------------------------
+        if not completed_transaction:
+            db.rollback()
+            return None
 
         reward_event.status = "PROCESSED"
         reward_event.transaction_id = transaction_id
 
+        # ???? ???? ??? ????? ?????? ???????
         db.commit()
         db.refresh(reward_event)
 
         return reward_event
 
-
     except Exception:
-
-        fail_financial_transaction(
-            db,
-            transaction_id
-        )
-
+        db.rollback()
         raise
 
     

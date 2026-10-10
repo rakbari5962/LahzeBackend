@@ -11,44 +11,38 @@ def create_transaction(
     total_amount: int,
     reference_type: str,
     reference_id: int,
-    status: str = "PENDING"
+    status: str = "PENDING",
+    commit: bool = True,
+    fail_if_exists: bool = False,
 ):
-
     existing_transaction = db.query(
         FinancialTransaction
     ).filter(
         FinancialTransaction.transaction_id == transaction_id
     ).first()
 
-
     if existing_transaction:
+        if fail_if_exists:
+            return None
         return existing_transaction
 
-
-
     transaction = FinancialTransaction(
-
         transaction_id=transaction_id,
-
         type=transaction_type,
-
         status=status,
-
         total_amount=total_amount,
-
         reference_type=reference_type,
-
-        reference_id=reference_id
-
+        reference_id=reference_id,
     )
-
 
     db.add(transaction)
 
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
 
     db.refresh(transaction)
-
 
     return transaction
 
@@ -93,25 +87,24 @@ def get_transaction_by_reference(
 def update_transaction_status(
     db: Session,
     transaction_id: str,
-    status: str
+    status: str,
+    commit: bool = True,
 ):
-
     transaction = get_transaction(
         db,
-        transaction_id
+        transaction_id,
     )
-
 
     if not transaction:
         return None
 
-
     transaction.status = status
 
-
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
 
     db.refresh(transaction)
-
 
     return transaction

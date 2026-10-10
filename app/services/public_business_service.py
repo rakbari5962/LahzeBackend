@@ -6,6 +6,11 @@ from app.repositories.business_repository import (
 )
 
 
+from app.services.category_proposal_service import (
+    get_pending_proposal_for_business
+)
+
+
 from app.services.business_reputation_service import (
     get_business_reputation
 )
@@ -37,6 +42,20 @@ def get_public_business_profile(
 
     if not business:
 
+        return None
+
+
+
+    pending_proposal = get_pending_proposal_for_business(
+        db=db,
+        business_id=business_id
+    )
+
+
+
+    if pending_proposal:
+
+        # Category is still under admin review; the public profile stays hidden.
         return None
 
 

@@ -3,6 +3,7 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+    UniqueConstraint,
 )
 
 from sqlalchemy.sql import func
@@ -14,6 +15,15 @@ from app.database.database import Base
 class Account(Base):
 
     __tablename__ = "accounts"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "owner_type",
+            "owner_id",
+            "account_type",
+            name="uq_accounts_owner_type_owner_id_account_type",
+        ),
+    )
 
 
     id = Column(

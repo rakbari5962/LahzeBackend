@@ -25,11 +25,12 @@ def evaluate_business_status(
 
 ):
 
-    business = db.query(Business).filter(
-
-        Business.id == business_id
-
-    ).first()
+    business = (
+        db.query(Business)
+        .filter(Business.id == business_id)
+        .with_for_update()
+        .first()
+    )
 
 
     if not business:
@@ -37,6 +38,14 @@ def evaluate_business_status(
         raise Exception(
             "Business not found"
         )
+
+    if business.is_deleted:
+        return {
+            "business_id": business_id,
+            "current_status": business.status,
+            "suggested_status": business.status,
+            "completion_percentage": None,
+        }
 
 
     completion = calculate_business_completion(

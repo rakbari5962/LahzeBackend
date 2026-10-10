@@ -10,7 +10,7 @@ def get_categories(
 
     return db.query(BusinessCategory).filter(
 
-        BusinessCategory.is_active == True
+        BusinessCategory.is_active.is_(True)
 
     ).all()
 

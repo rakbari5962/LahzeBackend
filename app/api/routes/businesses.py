@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from sqlalchemy.orm import Session
 
@@ -27,6 +27,8 @@ from app.services.business_service import (
     create_business,
     get_businesses_by_owner
 )
+
+from app.services.business_deletion_service import delete_business
 
 from app.services.session_service import (
     get_login_session
@@ -95,6 +97,32 @@ def create_new_business(
     )
 
 
+@router.delete(
+    "/{business_id}",
+    response_model=BusinessResponse
+)
+def delete_business_request(
+    business_id: int,
+    token: str = Query(...),
+    db: Session = Depends(get_db)
+):
+    session = get_login_session(
+        db=db,
+        token=token
+    )
+
+    if not session:
+        raise Exception(
+            "User not logged in"
+        )
+
+    return delete_business(
+        db=db,
+        business_id=business_id,
+        owner_user_id=session.user_id,
+    )
+
+
 @router.patch(
     "/{business_id}/location",
     response_model=BusinessResponse
@@ -131,6 +159,11 @@ def update_location(
             "You are not the owner of this business"
         )
 
+    if business.is_deleted:
+        raise Exception(
+            "BUSINESS_DELETED"
+        )
+
     return update_business_location(
         db=db,
         business_id=business_id,
@@ -150,13 +183,38 @@ def suggest_business_category(
     db: Session = Depends(get_db)
 ):
 
-    return create_ai_category_suggestion(
+    business = get_business(
+        db,
+        business_id
+    )
+
+    if not business:
+        raise HTTPException(
+            status_code=404,
+            detail="Business not found",
+        )
+
+    if business.is_deleted:
+        raise HTTPException(
+            status_code=404,
+            detail="Business not found",
+        )
+
+    suggestion = create_ai_category_suggestion(
         db=db,
         business_id=business_id,
         business_name=data.business_name,
         services=data.services,
         description=data.description
     )
+
+    if suggestion is None:
+        raise HTTPException(
+            status_code=404,
+            detail="NO_CATEGORY_SUGGESTION",
+        )
+
+    return suggestion
 
 
 @router.get(

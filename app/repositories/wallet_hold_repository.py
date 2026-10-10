@@ -79,24 +79,24 @@ def release_hold(
 
 def capture_hold(
     db: Session,
-    booking_id: int
+    booking_id: int,
+    commit: bool = True,
 ):
-
     hold = get_active_hold(
         db,
-        booking_id
+        booking_id,
     )
-
 
     if not hold:
         return None
 
-
     hold.status = "CAPTURED"
 
+    if commit:
+        db.commit()
+    else:
+        db.flush()
 
-    db.commit()
     db.refresh(hold)
-
 
     return hold

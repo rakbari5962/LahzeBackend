@@ -4,6 +4,7 @@ from app.models.ledger import LedgerEntry
 
 
 
+
 def create_ledger_entry(
     db: Session,
     account_id: int,
@@ -12,36 +13,30 @@ def create_ledger_entry(
     direction: str,
     amount: int,
     reference_type: str,
-    reference_id: int
+    reference_id: int,
+    commit: bool = True,
 ):
-
     ledger_entry = LedgerEntry(
-
         account_id=account_id,
-
         transaction_id=transaction_id,
-
         entry_type=entry_type,
-
         direction=direction,
-
         amount=amount,
-
         reference_type=reference_type,
-
-        reference_id=reference_id
-
+        reference_id=reference_id,
     )
-
 
     db.add(ledger_entry)
 
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
 
     db.refresh(ledger_entry)
 
-
     return ledger_entry
+
 
 
 

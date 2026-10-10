@@ -58,6 +58,10 @@ from app.api.routes.users import router as users_router
 
 from app.api.routes.businesses import router as businesses_router
 
+from app.api.routes.business_categories import router as business_categories_router
+
+from app.api.routes.business_category_suggestion import router as business_category_suggestion_router
+
 from app.api.routes.services import router as services_router
 
 from app.api.routes.opportunities import router as opportunities_router
@@ -77,6 +81,8 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.invitations import router as invitations_router
 
 from app.api.routes.category_suggestions import router as category_suggestions_router
+
+from app.api.routes.admin_category_proposals import router as admin_category_proposals_router
 
 from app.api.routes.business_services import router as business_services_router
 
@@ -375,12 +381,26 @@ app.include_router(
 
 
 app.include_router(
+    business_categories_router
+)
+
+app.include_router(
+    business_category_suggestion_router
+)
+
+
+app.include_router(
     businesses_router
 )
 
 
 app.include_router(
     category_suggestions_router
+)
+
+
+app.include_router(
+    admin_category_proposals_router
 )
 
 

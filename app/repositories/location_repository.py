@@ -26,3 +26,18 @@ def get_cities_by_province(
         .order_by(City.name)
         .all()
     )
+
+
+def get_city_by_province(
+    db: Session,
+    city_id: int,
+    province_id: int
+):
+    return (
+        db.query(City)
+        .filter(
+            City.id == city_id,
+            City.province_id == province_id,
+        )
+        .first()
+    )

@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 
+from app.core.security.admin_guard import admin_required
+
 from app.database.dependencies import get_db
 
 
@@ -93,7 +95,9 @@ def approve_existing_suggestion(
 
     suggestion_id: int,
 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+
+    _admin=Depends(admin_required)
 
 ):
 
@@ -117,7 +121,9 @@ def reject_existing_suggestion(
 
     suggestion_id: int,
 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+
+    _admin=Depends(admin_required)
 
 ):
 

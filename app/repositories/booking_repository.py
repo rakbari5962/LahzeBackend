@@ -38,7 +38,8 @@ from app.services.wallet_hold_service import (
 )
 
 from app.services.payment_service import (
-    create_payment
+    create_payment,
+    validate_completed_payment,
 )
 
 from app.services.cancellation_service import (
@@ -70,6 +71,19 @@ def create_booking(
 
     if not opportunity:
         return None
+
+    business = (
+        db.query(Business)
+        .filter(Business.id == opportunity.business_id)
+        .with_for_update()
+        .first()
+    )
+
+    if not business:
+        raise HTTPException(status_code=404, detail="BUSINESS_NOT_FOUND")
+
+    if business.is_deleted:
+        raise HTTPException(status_code=409, detail="BUSINESS_DELETED")
 
 
     if opportunity.status != "ACTIVE":
@@ -350,192 +364,192 @@ def get_user_bookings(
 
 def confirm_booking(
     db: Session,
-    booking_id: int
+    booking_id: int,
 ):
-
-    booking = db.query(Booking).filter(
-        Booking.id == booking_id
-    ).first()
-
+    booking = (
+        db.query(Booking)
+        .filter(Booking.id == booking_id)
+        .with_for_update()
+        .first()
+    )
 
     if not booking:
         return None
 
-
-    # Idempotency:
-    # اگر قبلاً تایید شده، همان Booking را برگردان
-    # و Payment دوباره ساخته نشود
-
     if booking.status == "CONFIRMED":
-        return booking
+        hold = (
+            db.query(WalletHold)
+            .filter(WalletHold.booking_id == booking.id)
+            .with_for_update()
+            .first()
+        )
 
+        if (
+            not hold
+            or hold.user_id != booking.user_id
+            or hold.status != "CAPTURED"
+            or hold.amount is None
+            or hold.amount <= 0
+        ):
+            db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="BOOKING_PAYMENT_INCONSISTENT",
+            )
+
+        payment = validate_completed_payment(
+            db=db,
+            user_id=booking.user_id,
+            amount=hold.amount,
+            booking_id=booking.id,
+        )
+
+        if not payment:
+            db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="BOOKING_PAYMENT_INCONSISTENT",
+            )
+
+        return booking
 
     if booking.status != "PENDING_CONFIRMATION":
         raise HTTPException(
-             status_code=400,
-             detail="Booking cannot be confirmed"
-         )
-
-
+            status_code=400,
+            detail="Booking cannot be confirmed",
+        )
 
     opportunity = db.query(Opportunity).filter(
         Opportunity.id == booking.opportunity_id
     ).first()
 
-
-
     if not opportunity:
         return None
 
+    business = (
+        db.query(Business)
+        .filter(Business.id == opportunity.business_id)
+        .with_for_update()
+        .first()
+    )
 
-
-    try:
-
-
-        # تبدیل مبلغ بلوکه شده به پرداخت قطعی
-
-        hold = capture_booking_hold(
-            db=db,
-            booking_id=booking.id
+    if not business:
+        raise HTTPException(
+            status_code=404,
+            detail="BUSINESS_NOT_FOUND",
         )
 
+    if business.is_deleted:
+        raise HTTPException(
+            status_code=409,
+            detail="BUSINESS_DELETED",
+        )
+
+    # بخش اصلی: Hold، پرداخت و تأیید رزرو
+    # باید در یک تراکنش دیتابیس ثبت شوند.
+    try:
+        hold = capture_booking_hold(
+            db=db,
+            booking_id=booking.id,
+            commit=False,
+        )
 
         if not hold:
-
-            print(
-                "HOLD NOT FOUND:",
-                booking.id
-            )
-
+            db.rollback()
+            print("HOLD NOT FOUND:", booking.id)
             return None
-
-
-
-
-        # انتقال پول به Escrow
 
         payment = create_payment(
             db=db,
             user_id=booking.user_id,
             amount=opportunity.final_price,
-            booking_id=booking.id
+            booking_id=booking.id,
+            commit=False,
         )
-
 
         if not payment:
-
-            print(
-                "PAYMENT FAILED:",
-                booking.id
-            )
-
+            db.rollback()
+            print("PAYMENT FAILED:", booking.id)
             return None
 
-
-
-
         booking.status = "CONFIRMED"
+        booking.confirmed_at = datetime.now(timezone.utc)
 
-        booking.confirmed_at = datetime.now(
-            timezone.utc
-        )
+        # تنها Commit بخش اصلی تأیید رزرو
+        db.commit()
+        db.refresh(booking)
 
+    except Exception as e:
+        db.rollback()
+        print("CONFIRM BOOKING ERROR:", repr(e))
+        raise
 
-        # ثبت First Customer Priority Access
-
+    # دسترسی اولویت‌دار پس از ثبت قطعی رزرو
+    try:
         if not has_first_customer_access(
             db=db,
-            business_id=booking.business_id
+            business_id=booking.business_id,
         ):
-
             create_priority_access(
                 db=db,
                 business_id=booking.business_id,
                 user_id=booking.user_id,
                 access_type="FIRST_CUSTOMER",
-                source_id=booking.id
+                source_id=booking.id,
             )
+    except Exception as reward_error:
+        db.rollback()
+        print(
+            "PRIORITY ACCESS ERROR AFTER CONFIRM:",
+            repr(reward_error),
+        )
 
-
-        db.commit()
-
-        db.refresh(booking)
-
-    
-
-
-
+    # اعلان تأیید رزرو؛ خطای اعلان نباید
+    # پرداخت ثبت‌شده را ناموفق جلوه دهد.
+    try:
         notification = NotificationCreate(
             user_id=booking.user_id,
             type="BOOKING_CONFIRMED",
             title="رزرو تایید شد",
-            message="رزرو شما توسط کسب و کار تایید شد."
+            message="رزرو شما توسط کسب و کار تایید شد.",
         )
 
+        create_notification(db, notification)
 
-        create_notification(
-            db,
-            notification
+    except Exception as notification_error:
+        db.rollback()
+        print(
+            "BOOKING CONFIRM NOTIFICATION ERROR:",
+            repr(notification_error),
         )
 
-
-
-
-
+    # ارسال پیامک مستقل از تراکنش اصلی
+    try:
         customer = db.query(User).filter(
             User.id == booking.user_id
         ).first()
-
-
 
         business = db.query(Business).filter(
             Business.id == booking.business_id
         ).first()
 
-
-
         if customer and business:
+            send_booking_confirmation_notification(
+                mobile=customer.phone_number,
+                business_name=business.name,
+                booking_id=booking.id,
+            )
 
-            try:
-
-                send_booking_confirmation_notification(
-                    mobile=customer.phone_number,
-                    business_name=business.name,
-                    booking_id=booking.id
-                )
-
-
-            except Exception as e:
-
-                print(
-                    "BOOKING CONFIRM SMS ERROR:",
-                    repr(e)
-                )
-
-
-
-
-        print(
-            "BOOKING CONFIRMED:",
-            booking.id
-        )
-
-
-        return booking
-
-
-
-
-    except Exception as e:
-
+    except Exception as sms_error:
         db.rollback()
-
         print(
-            "CONFIRM BOOKING ERROR:",
-            repr(e)
+            "BOOKING CONFIRM SMS ERROR:",
+            repr(sms_error),
         )
 
-        raise
+    print("BOOKING CONFIRMED:", booking.id)
+
+    return booking
 
 
 
@@ -637,115 +651,87 @@ def cancel_booking(
 
 def complete_booking(
     db: Session,
-    booking_id: int
+    booking_id: int,
 ):
-
     booking = db.query(Booking).filter(
         Booking.id == booking_id
     ).first()
 
-
-
     if not booking:
         return None
 
-
-
-# Idempotency:
-# اگر قبلاً کامل شده، دوباره Settlement اجرا نشود
-
-    if booking.status == "COMPLETED":
-        return booking
-
-
-    if booking.status != "CONFIRMED":
+    # وضعیت COMPLETED مانع بررسی مجدد تسویه نیست.
+    if booking.status not in ("CONFIRMED", "COMPLETED"):
         raise HTTPException(
             status_code=400,
-            detail="Booking cannot be completed"
+            detail="Booking cannot be completed",
         )
 
+    was_completed = booking.status == "COMPLETED"
 
+    opportunity = db.query(Opportunity).filter(
+        Opportunity.id == booking.opportunity_id
+    ).first()
+
+    if not opportunity:
+        return None
 
     try:
-
-
-        booking.status = "COMPLETED"
-
-
-        booking.completed_at = datetime.now(
-            timezone.utc
+        # ابتدا باید تسویه موفق یا تسویه قبلی معتبر داشته باشیم.
+        settlement_result = settle_payment(
+            db=db,
+            booking_id=booking.id,
+            business_id=booking.business_id,
+            amount=opportunity.final_price,
         )
-
-
-        db.commit()
-        db.refresh(booking)
-
-
-
-
-        notification = NotificationCreate(
-            user_id=booking.user_id,
-            type="BOOKING_COMPLETED",
-            title="خدمت انجام شد",
-            message="خدمت شما با موفقیت انجام شد. اکنون می‌توانید تجربه خود را ثبت کنید."
-        )
-
-
-        create_notification(
-            db,
-            notification
-        )
-
-
-
-
-        create_review_request(
-            db,
-            booking
-        )
-
-
-
-
-
-        opportunity = db.query(Opportunity).filter(
-            Opportunity.id == booking.opportunity_id
-        ).first()
-
-
-
-        if opportunity:
-
-
-            settlement_result = settle_payment(
-                db=db,
-                booking_id=booking.id,
-                business_id=booking.business_id,
-                amount=opportunity.final_price
-            )
-
-
-            print(
-                "SETTLEMENT RESULT:",
-                settlement_result
-            )
-
-
-
-        return booking
-
-
-
-    except Exception as e:
-
-
-        db.rollback()
-
 
         print(
-            "COMPLETE BOOKING ERROR:",
-            repr(e)
+            "SETTLEMENT RESULT:",
+            settlement_result,
         )
 
+        if not settlement_result:
+            db.rollback()
+            print(
+                "BOOKING NOT COMPLETED: SETTLEMENT NOT VERIFIED",
+                booking.id,
+            )
+            return None
 
+        # فقط بعد از موفقیت تسویه، رزرو تکمیل می‌شود.
+        if not was_completed:
+            booking.status = "COMPLETED"
+            booking.completed_at = datetime.now(timezone.utc)
+
+            db.commit()
+            db.refresh(booking)
+
+    except Exception as e:
+        db.rollback()
+        print("COMPLETE BOOKING ERROR:", repr(e))
         raise
+
+    # اعلان‌ها پس از ثبت وضعیت اصلی رزرو
+    if not was_completed:
+        try:
+            notification = NotificationCreate(
+                user_id=booking.user_id,
+                type="BOOKING_COMPLETED",
+                title="خدمت انجام شد",
+                message=(
+                    "خدمت شما با موفقیت انجام شد. "
+                    "اکنون می‌توانید تجربه خود را ثبت کنید."
+                ),
+            )
+
+            create_notification(db, notification)
+            create_review_request(db, booking)
+
+        except Exception as notification_error:
+            db.rollback()
+            print(
+                "COMPLETION FOLLOW-UP ERROR:",
+                repr(notification_error),
+            )
+
+    return booking

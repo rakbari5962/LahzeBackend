@@ -40,11 +40,12 @@ def update_business_status_manually(
 ):
 
 
-    business = db.query(Business).filter(
-
-        Business.id == business_id
-
-    ).first()
+    business = (
+        db.query(Business)
+        .filter(Business.id == business_id)
+        .with_for_update()
+        .first()
+    )
 
 
 
@@ -62,6 +63,17 @@ def update_business_status_manually(
 
             }
 
+        )
+
+
+    if business.is_deleted:
+        raise LahzeException(
+            error_code=ErrorCodes.UNKNOWN_ERROR,
+            message="Business is deleted",
+            context={
+                "business_id": business_id,
+                "is_deleted": True
+            }
         )
 
 

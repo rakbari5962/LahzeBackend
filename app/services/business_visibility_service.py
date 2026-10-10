@@ -3,6 +3,16 @@ from sqlalchemy.orm import Session
 
 from app.models.business import Business
 
+from app.models.category_proposal import (
+
+    CategoryProposal,
+
+    CategoryProposalBusiness,
+
+    PROPOSAL_PENDING
+
+)
+
 from app.models.business_service import BusinessService
 
 from app.models.city import City
@@ -52,7 +62,9 @@ def get_business_visibility_detail(
 
         "has_active_service": False,
 
-        "city_active": False
+        "city_active": False,
+
+        "category_resolved": False
 
     }
 
@@ -155,6 +167,51 @@ def get_business_visibility_detail(
             "CITY_NOT_FOUND"
 
         )
+
+
+
+    # شرط ۵:
+    # دسته‌بندی در انتظار بررسی نباشد
+
+    pending_proposal = (
+
+        db.query(CategoryProposalBusiness)
+
+        .join(
+
+            CategoryProposal,
+
+            CategoryProposal.id == CategoryProposalBusiness.proposal_id
+
+        )
+
+        .filter(
+
+            CategoryProposalBusiness.business_id == business_id,
+
+            CategoryProposal.status == PROPOSAL_PENDING
+
+        )
+
+        .first()
+
+    )
+
+
+
+    if pending_proposal:
+
+        checks["category_resolved"] = False
+
+        reasons.append(
+
+            "CATEGORY_PENDING_REVIEW"
+
+        )
+
+    else:
+
+        checks["category_resolved"] = True
 
 
 

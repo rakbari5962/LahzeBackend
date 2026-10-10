@@ -22,26 +22,22 @@ def get_user_wallet(
 
 def create_user_wallet(
     db: Session,
-    user_id: int
+    user_id: int,
+    commit: bool = True,
 ):
-
-    existing_wallet = get_user_wallet(
-        db,
-        user_id
-    )
-
+    existing_wallet = get_user_wallet(db, user_id)
 
     if existing_wallet:
         return existing_wallet
-
-
 
     return create_account(
         db,
         owner_type="USER",
         owner_id=user_id,
-        account_type="CUSTOMER_WALLET"
+        account_type="CUSTOMER_WALLET",
+        commit=commit,
     )
+
 
 
 
@@ -49,20 +45,16 @@ def create_user_wallet(
 
 def get_or_create_user_wallet(
     db: Session,
-    user_id: int
+    user_id: int,
+    commit: bool = True,
 ):
-
-    wallet = get_user_wallet(
-        db,
-        user_id
-    )
-
+    wallet = get_user_wallet(db, user_id)
 
     if wallet:
         return wallet
 
-
     return create_user_wallet(
         db,
-        user_id
+        user_id,
+        commit=commit,
     )

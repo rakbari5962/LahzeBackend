@@ -70,12 +70,6 @@ class Opportunity(Base):
         default="ACTIVE"
     )
 
-    status = Column(
-        String,
-        nullable=False,
-        default="ACTIVE"
-    )
-
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()

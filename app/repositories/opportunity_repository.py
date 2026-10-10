@@ -1,14 +1,46 @@
+from fastapi import HTTPException
+from sqlalchemy import exists
 from sqlalchemy.orm import Session
 
+from app.models.business import Business
+from app.models.category_proposal import (
+    CategoryProposal,
+    CategoryProposalBusiness,
+    PROPOSAL_PENDING,
+)
 from app.models.opportunity import Opportunity
 from app.schemas.opportunity import OpportunityCreate
 
+
+def _has_pending_category_proposal(business_id):
+    """EXISTS clause: the business is waiting for an admin category decision."""
+    return (
+        exists()
+        .where(
+            CategoryProposalBusiness.business_id == business_id,
+            CategoryProposalBusiness.proposal_id == CategoryProposal.id,
+            CategoryProposal.status == PROPOSAL_PENDING,
+        )
+    )
 
 
 def create_opportunity(
     db: Session,
     opportunity: OpportunityCreate
 ):
+
+    business = (
+        db.query(Business)
+        .filter(Business.id == opportunity.business_id)
+        .with_for_update()
+        .first()
+    )
+
+    if not business:
+        raise HTTPException(status_code=404, detail="BUSINESS_NOT_FOUND")
+
+    if business.is_deleted:
+        raise HTTPException(status_code=409, detail="BUSINESS_DELETED")
 
     db_opportunity = Opportunity(
 
@@ -38,8 +70,6 @@ def create_opportunity(
 
 
 
-
-
 def get_opportunity(
     db: Session,
     opportunity_id: int
@@ -47,13 +77,14 @@ def get_opportunity(
 
     return (
         db.query(Opportunity)
+        .join(Business, Opportunity.business_id == Business.id)
         .filter(
-            Opportunity.id == opportunity_id
+            Opportunity.id == opportunity_id,
+            Business.is_deleted == False,
+            ~_has_pending_category_proposal(business_id=Opportunity.business_id),
         )
         .first()
     )
-
-
 
 
 
@@ -63,13 +94,14 @@ def get_active_opportunities(
 
     return (
         db.query(Opportunity)
+        .join(Business, Opportunity.business_id == Business.id)
         .filter(
-            Opportunity.status != "EXPIRED"
+            Opportunity.status != "EXPIRED",
+            Business.is_deleted == False,
+            ~_has_pending_category_proposal(business_id=Opportunity.business_id),
         )
         .all()
     )
-
-
 
 
 
@@ -78,26 +110,16 @@ def get_business_opportunities(
     business_id: int
 ):
 
-    print(
-        "SEARCH BUSINESS ID:",
-        business_id
-    )
-
-
     result = (
         db.query(Opportunity)
+        .join(Business, Opportunity.business_id == Business.id)
         .filter(
             Opportunity.business_id == business_id,
-            Opportunity.status != "EXPIRED"
+            Opportunity.status != "EXPIRED",
+            Business.is_deleted == False,
+            ~_has_pending_category_proposal(business_id=Opportunity.business_id),
         )
         .all()
     )
-
-
-    print(
-        "FOUND OPPORTUNITIES:",
-        result
-    )
-
 
     return result

@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
 
 
+from fastapi import HTTPException
+
+
+from app.models.business import Business
 from app.models.business_service import BusinessService
 
 
@@ -16,10 +20,25 @@ def create_business_service(
 
     business_id: int,
 
-    service: BusinessServiceCreate
+    service: BusinessServiceCreate,
+
+    commit: bool = True
 
 ):
 
+
+    business = (
+        db.query(Business)
+        .filter(Business.id == business_id)
+        .with_for_update()
+        .first()
+    )
+
+    if not business:
+        raise HTTPException(status_code=404, detail="BUSINESS_NOT_FOUND")
+
+    if business.is_deleted:
+        raise HTTPException(status_code=409, detail="BUSINESS_DELETED")
 
     db_service = BusinessService(
 
@@ -40,9 +59,11 @@ def create_business_service(
 
     db.add(db_service)
 
-    db.commit()
-
-    db.refresh(db_service)
+    if commit:
+        db.commit()
+        db.refresh(db_service)
+    else:
+        db.flush()
 
 
     return db_service

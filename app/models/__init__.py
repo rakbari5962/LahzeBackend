@@ -12,6 +12,14 @@ from app.models.business_service import BusinessService
 
 from app.models.category_suggestion import CategorySuggestion
 
+from app.models.category_alias import BusinessCategoryAlias
+
+from app.models.category_proposal import (
+    CategoryProposal,
+    CategoryProposalBusiness,
+    CategoryProposalHistory
+)
+
 from app.models.account import Account
 
 from app.models.ledger import LedgerEntry

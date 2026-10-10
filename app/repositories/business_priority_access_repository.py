@@ -9,7 +9,8 @@ def create_priority_access(
     business_id: int,
     user_id: int,
     access_type: str,
-    source_id: int | None = None
+    source_id: int | None = None,
+    commit: bool = True
 ):
 
     priority_access = BusinessPriorityAccess(
@@ -29,9 +30,11 @@ def create_priority_access(
 
     db.add(priority_access)
 
-    db.commit()
-
-    db.refresh(priority_access)
+    if commit:
+        db.commit()
+        db.refresh(priority_access)
+    else:
+        db.flush()
 
 
     return priority_access

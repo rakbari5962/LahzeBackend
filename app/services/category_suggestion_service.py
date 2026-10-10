@@ -1,4 +1,10 @@
+from fastapi import HTTPException
+
 from sqlalchemy.orm import Session
+
+from app.models.category_suggestion import CategorySuggestion
+
+from app.repositories.business_category_repository import get_category
 
 
 from app.repositories.category_suggestion_repository import (
@@ -241,11 +247,7 @@ def get_suggestion(
 
     if not suggestion:
 
-        raise Exception(
-
-            "Suggestion not found"
-
-        )
+        raise HTTPException(status_code=404, detail="SUGGESTION_NOT_FOUND")
 
 
     return suggestion
@@ -260,6 +262,27 @@ def get_suggestion(
 
 
 
+def _load_pending_suggestion(db: Session, suggestion_id: int):
+
+    suggestion = (
+        db.query(CategorySuggestion)
+        .filter(CategorySuggestion.id == suggestion_id)
+        .with_for_update()
+        .first()
+    )
+
+    if not suggestion:
+
+        raise HTTPException(status_code=404, detail="SUGGESTION_NOT_FOUND")
+
+    if suggestion.status != "PENDING":
+
+        raise HTTPException(status_code=409, detail="SUGGESTION_NOT_PENDING")
+
+    return suggestion
+
+
+
 def approve_suggestion(
 
     db: Session,
@@ -268,65 +291,44 @@ def approve_suggestion(
 
 ):
 
+    try:
 
-    suggestion = get_category_suggestion(
+        suggestion = _load_pending_suggestion(db, suggestion_id)
 
-        db,
+        category = get_category(db, suggestion.suggested_category_id)
 
-        suggestion_id
+        if category is None or not category.is_active:
 
-    )
+            raise HTTPException(status_code=409, detail="CATEGORY_NOT_ACTIVE")
 
-
-    if not suggestion:
-
-        raise Exception(
-
-            "Suggestion not found"
-
+        result = approve_category_suggestion_with_business_update(
+            db,
+            suggestion,
+            commit=False
         )
 
+        create_category_ai_history(
+            db=db,
+            business_id=suggestion.business_id,
+            suggestion_id=suggestion.id,
+            suggested_category_id=suggestion.suggested_category_id,
+            action="ACCEPTED",
+            confidence=suggestion.confidence,
+            input_snapshot=suggestion.input_snapshot,
+            commit=False
+        )
 
+        db.commit()
 
-    result = approve_category_suggestion_with_business_update(
+    except Exception:
 
-        db,
+        db.rollback()
 
-        suggestion
+        raise
 
-    )
-
-
-
-    create_category_ai_history(
-
-        db=db,
-
-        business_id=suggestion.business_id,
-
-        suggestion_id=suggestion.id,
-
-        suggested_category_id=suggestion.suggested_category_id,
-
-        action="ACCEPTED",
-
-        confidence=suggestion.confidence,
-
-        input_snapshot=suggestion.input_snapshot
-
-    )
-
-
+    db.refresh(result)
 
     return result
-
-
-
-
-
-
-
-
 
 
 
@@ -338,54 +340,35 @@ def reject_suggestion(
 
 ):
 
+    try:
 
-    suggestion = get_category_suggestion(
+        suggestion = _load_pending_suggestion(db, suggestion_id)
 
-        db,
-
-        suggestion_id
-
-    )
-
-
-    if not suggestion:
-
-        raise Exception(
-
-            "Suggestion not found"
-
+        result = reject_category_suggestion(
+            db,
+            suggestion,
+            commit=False
         )
 
+        create_category_ai_history(
+            db=db,
+            business_id=suggestion.business_id,
+            suggestion_id=suggestion.id,
+            suggested_category_id=suggestion.suggested_category_id,
+            action="REJECTED",
+            confidence=suggestion.confidence,
+            input_snapshot=suggestion.input_snapshot,
+            commit=False
+        )
 
+        db.commit()
 
-    result = reject_category_suggestion(
+    except Exception:
 
-        db,
+        db.rollback()
 
-        suggestion
+        raise
 
-    )
-
-
-
-    create_category_ai_history(
-
-        db=db,
-
-        business_id=suggestion.business_id,
-
-        suggestion_id=suggestion.id,
-
-        suggested_category_id=suggestion.suggested_category_id,
-
-        action="REJECTED",
-
-        confidence=suggestion.confidence,
-
-        input_snapshot=suggestion.input_snapshot
-
-    )
-
-
+    db.refresh(result)
 
     return result

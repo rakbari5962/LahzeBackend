@@ -59,6 +59,19 @@ class BusinessCategory(Base):
     )
 
 
+    # Comparison identity of `name` (see category_normalization). Nullable so
+    # rows created before this column existed stay valid until backfilled.
+    normalized_name = Column(
+
+        String,
+
+        unique=True,
+
+        nullable=True
+
+    )
+
+
     is_active = Column(
 
         Boolean,

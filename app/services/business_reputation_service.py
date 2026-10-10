@@ -19,7 +19,21 @@ def get_business_reputation(
 
     if not analysis:
 
-        return None
+        return {
+            "business_id": business_id,
+            "total_reviews": 0,
+            "average_rating": None,
+            "strengths": [],
+            "weaknesses": [],
+            "themes": [],
+            "customer_sentiment": {
+                "positive": 0,
+                "neutral": 0,
+                "negative": 0
+            },
+            "attribute_summary": {},
+            "model_version": None
+        }
 
 
 

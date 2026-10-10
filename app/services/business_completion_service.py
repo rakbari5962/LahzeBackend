@@ -25,11 +25,12 @@ def calculate_business_completion(
 ):
 
 
-    business = db.query(Business).filter(
-
-        Business.id == business_id
-
-    ).first()
+    business = (
+        db.query(Business)
+        .filter(Business.id == business_id)
+        .with_for_update()
+        .first()
+    )
 
 
 
@@ -40,6 +41,15 @@ def calculate_business_completion(
             "Business not found"
 
         )
+
+    if business.is_deleted:
+        return {
+            "business_id": business_id,
+            "completion_percentage": None,
+            "is_complete": False,
+            "missing_items": [],
+            "completed_items": [],
+        }
 
 
 

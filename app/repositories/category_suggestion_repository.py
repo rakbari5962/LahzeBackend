@@ -108,7 +108,9 @@ def reject_category_suggestion(
 
     db: Session,
 
-    suggestion: CategorySuggestion
+    suggestion: CategorySuggestion,
+
+    commit: bool = True
 
 ):
 
@@ -116,9 +118,15 @@ def reject_category_suggestion(
     suggestion.status = "REJECTED"
 
 
-    db.commit()
+    if commit:
 
-    db.refresh(suggestion)
+        db.commit()
+
+        db.refresh(suggestion)
+
+    else:
+
+        db.flush()
 
 
     return suggestion
@@ -133,7 +141,9 @@ def approve_category_suggestion_with_business_update(
 
     db: Session,
 
-    suggestion: CategorySuggestion
+    suggestion: CategorySuggestion,
+
+    commit: bool = True
 
 ):
 
@@ -164,12 +174,17 @@ def approve_category_suggestion_with_business_update(
 
 
 
-    db.commit()
+    if commit:
 
+        db.commit()
 
-    db.refresh(suggestion)
+        db.refresh(suggestion)
 
-    db.refresh(business)
+        db.refresh(business)
+
+    else:
+
+        db.flush()
 
 
 

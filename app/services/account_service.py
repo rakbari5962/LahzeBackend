@@ -6,14 +6,16 @@ from app.repositories.account_repository import create_account
 
 def create_user_wallet_account(
     db: Session,
-    user_id: int
+    user_id: int,
+    commit: bool = True,
 ):
 
     return create_account(
         db,
         owner_type="USER",
         owner_id=user_id,
-        account_type="CUSTOMER_WALLET"
+        account_type="CUSTOMER_WALLET",
+        commit=commit,
     )
 
 
@@ -22,14 +24,16 @@ def create_user_wallet_account(
 
 def create_business_revenue_account(
     db: Session,
-    business_id: int
+    business_id: int,
+    commit: bool = True
 ):
 
     return create_account(
         db,
         owner_type="BUSINESS",
         owner_id=business_id,
-        account_type="BUSINESS_REVENUE"
+        account_type="BUSINESS_REVENUE",
+        commit=commit
     )
 
 
@@ -37,14 +41,16 @@ def create_business_revenue_account(
 
 
 def create_platform_treasury_account(
-    db: Session
+    db: Session,
+    commit: bool = True,
 ):
 
     return create_account(
         db,
         owner_type="PLATFORM",
         owner_id=1,
-        account_type="PLATFORM_TREASURY"
+        account_type="PLATFORM_TREASURY",
+        commit=commit,
     )
 
 
