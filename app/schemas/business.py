@@ -46,19 +46,11 @@ class BusinessCreate(BaseModel):
 
 
 class BusinessLocationUpdate(BaseModel):
-
+    province_id: int
+    city_id: int
     latitude: float
-
     longitude: float
-
     address: str | None = None
-
-
-
-
-
-
-
 
 
 
@@ -72,9 +64,9 @@ class BusinessResponse(BaseModel):
 
     owner_user_id: int
 
-    province_id: int
+    province_id: int | None = None
 
-    city_id: int
+    city_id: int | None = None
 
     latitude: float | None = None
 

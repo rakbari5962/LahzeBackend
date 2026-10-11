@@ -71,6 +71,8 @@ def get_business_for_update(
 def update_business_location(
     db: Session,
     business_id: int,
+    province_id: int,
+    city_id: int,
     latitude: float,
     longitude: float,
     address: str | None = None
@@ -86,6 +88,8 @@ def update_business_location(
     if not business or business.is_deleted:
         return None
 
+    business.province_id = province_id
+    business.city_id = city_id
     business.latitude = latitude
     business.longitude = longitude
     business.address = address

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database.dependencies import get_db
+from app.models.city import City
 
 from app.schemas.business import (
     BusinessCreate,
@@ -164,9 +165,27 @@ def update_location(
             "BUSINESS_DELETED"
         )
 
+    city = db.query(City).filter(
+        City.id == location.city_id
+    ).first()
+
+    if not city:
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid city_id"
+        )
+
+    if city.province_id != location.province_id:
+        raise HTTPException(
+            status_code=422,
+            detail="city_id does not belong to province_id"
+        )
+
     return update_business_location(
         db=db,
         business_id=business_id,
+        province_id=location.province_id,
+        city_id=location.city_id,
         latitude=location.latitude,
         longitude=location.longitude,
         address=location.address
