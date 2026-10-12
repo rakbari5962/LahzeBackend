@@ -71,39 +71,34 @@ def create_login_session(
 
 
 def get_login_session(
-
     db: Session,
-
     token: str
-
 ):
-
     session = get_session_by_token(
-
         db=db,
-
         token=token
-
     )
 
-
     if not session:
-
         return None
-
-
 
     if not session.is_active:
-
         return None
 
+    expires_at = session.expires_at
 
-
-    if session.expires_at < datetime.now(timezone.utc):
-
+    if expires_at is None:
         return None
 
+    # SQLite may return a naive datetime even when the
+    # original datetime was stored with timezone information.
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
 
+    now = datetime.now(timezone.utc)
+
+    if expires_at <= now:
+        return None
 
     return session
 
